@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Maru — Fullstack Dev · FiveM · Discord Bots · Web · 3D</title>
+<meta name="description" content="Portafolio de Maru: desarrollador fullstack especializado en scripting FiveM, bots de Discord, desarrollo web y animaciones 3D con Three.js.">
+<meta name="theme-color" content="#06070b">
+<meta property="og:title" content="Maru — Fullstack Dev">
+<meta property="og:description" content="FiveM · Discord Bots · Web · Animaciones 3D. Proyectos, trayectoria y contacto.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http:
+<link rel="preconnect" href="https:
+<link href="https:
+<style>
+*,*::before,*::after{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{ background:#06070b; color:#ddd8f0; font-family:'JetBrains Mono',monospace; overflow-x:hidden; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+}
+
+#scroll-progress{ position:fixed; top:0; left:0; height:2px; width:0%; background:linear-gradient(90deg,#8b7bff,#2dd4bf); z-index:1001; transition:width .1s linear; }
+
+::-webkit-scrollbar{ width:4px; }
+::-webkit-scrollbar-track{ background:#06070b; }
+::-webkit-scrollbar-thumb{ background:#2a1f50; border-radius:4px; }
+::-webkit-scrollbar-thumb:hover{ background:#4b3f7f; }
+::selection{ background:#4b3f7f66; color:#e2e0f0; }
+
+
+.canvas-bg{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+.canvas-bg canvas{ display:block; }
+
+
+#bg-particles{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.15; }
+
+.hl{ color:#c9c1ff; }
+.badge-prox{ display:inline-block; font-size:6px; letter-spacing:.15em; text-transform:uppercase; background:#ff6b6b15; border:1px solid #ff6b6b40; color:#ff6b6b; padding:2px 8px; border-radius:20px; margin-left:6px; vertical-align:middle; font-family:'JetBrains Mono',monospace; }
+.tag-prox{ color:#ff6b6b !important; border-color:#ff6b6b40 !important; }
+
+
+section{ position:relative; z-index:1; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:100px 28px; }
+section .shade{ position:absolute; inset:0; z-index:0; background:linear-gradient(180deg,#06070b00 0%,#06070bdd 60%,#06070b 100%); pointer-events:none; }
+section .wrap{ position:relative; z-index:2; width:100%; max-width:1120px; opacity:0; transform:translateY(30px); transition:opacity .7s ease,transform .7s ease; }
+section .wrap.visible{ opacity:1; transform:translateY(0); }
+.shead{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+.shead .num{ font-size:10px; color:#8b7bff; font-weight:500; letter-spacing:.1em; }
+.shead .line{ flex:1; height:1px; background:linear-gradient(90deg,#2d1f50,transparent); }
+.shead h2{ font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:500; color:#8b7bff; text-transform:uppercase; letter-spacing:.25em; }
+
+
+header{ position:fixed; top:0; left:0; right:0; z-index:999; padding:12px 32px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(180deg,#06070bf2 0%,transparent 100%); }
+.logo{ font-size:11px; font-weight:600; letter-spacing:.35em; text-transform:uppercase; color:#c9c1ff; }
+.logo span{ color:#5a4f80; }
+nav{ display:flex; gap:20px; }
+nav a{ color:#847fa0; text-decoration:none; font-size:10px; letter-spacing:.15em; text-transform:uppercase; transition:color .2s; cursor:pointer; padding:4px 0; border-bottom:1px solid transparent; }
+nav a:hover, nav a:focus-visible{ color:#c9c1ff; border-bottom-color:#4b3f7f; }
+nav a.active{ color:#8b7bff; border-bottom-color:#8b7bff; }
+a:focus-visible, button:focus-visible, .ct-l a:focus-visible{ outline:1px solid #8b7bff; outline-offset:3px; }
+.burger{ display:none; width:32px; height:32px; border:1px solid #2d1f50; border-radius:6px; background:#0a081ae0; align-items:center; justify-content:center; cursor:pointer; flex-direction:column; gap:4px; }
+.burger span{ display:block; width:14px; height:1px; background:#c9c1ff; transition:transform .25s,opacity .25s; }
+.burger.open span:nth-child(1){ transform:translateY(5px) rotate(45deg); }
+.burger.open span:nth-child(2){ opacity:0; }
+.burger.open span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
+@media(max-width:760px){
+  .burger{ display:flex; }
+  nav{ position:fixed; top:0; right:0; height:100vh; width:min(72vw,280px); flex-direction:column; justify-content:center; align-items:flex-start; gap:22px; padding:40px 36px; background:#08060fee; backdrop-filter:blur(10px); border-left:1px solid #1a1230; transform:translateX(100%); transition:transform .35s ease; z-index:998; }
+  nav.open{ transform:translateX(0); }
+  nav a{ font-size:11px; }
+}
+
+
+#hero{ min-height:100vh; padding-top:0; }
+#hero .hero-3d{ position:absolute; inset:0; z-index:0; }
+#hero .hero-3d canvas{ display:block; }
+#hero .hero-fade{ position:absolute; inset:0; z-index:1; background:linear-gradient(180deg,#06070b00 0%,#06070b88 60%,#06070b 100%); pointer-events:none; }
+.hc{ position:relative; z-index:2; text-align:center; }
+.hc .badge{ display:inline-block; font-size:8px; letter-spacing:.35em; text-transform:uppercase; border:1px solid #2d1f50; padding:5px 14px; border-radius:50px; color:#6f5aaf; margin-bottom:20px; animation:badgePulse 3s ease-in-out infinite; }
+@keyframes badgePulse{ 0%,100%{ border-color:#2d1f50; } 50%{ border-color:#5b4b9f; box-shadow:0 0 20px #8b7bff15; } }
+.hc h1{ font-family:'Space Grotesk',sans-serif; font-size:clamp(72px,16vw,160px); font-weight:700; line-height:1; background:linear-gradient(135deg,#c9c1ff,#8b7bff 30%,#2dd4bf 60%,#ff9d3d); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; letter-spacing:-.05em; margin-bottom:8px; filter:drop-shadow(0 0 60px #8b7bff20); }
+.hc .sub{ font-size:clamp(11px,1.6vw,15px); letter-spacing:.4em; text-transform:uppercase; color:#4f4a6f; margin-bottom:22px; }
+.hc .tags{ display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin-bottom:24px; }
+.hc .tags span{ font-size:8px; letter-spacing:.18em; text-transform:uppercase; padding:4px 10px; border-radius:50px; border:1px solid #1f1535; color:#7f6abf; transition:all .2s; }
+.hc .tags span:hover{ border-color:#5b4b9f; color:#c9c1ff; }
+.hc .cmd{ font-size:10px; color:#3f3a5f; }
+.hc .cmd .p{ color:#2dd4bf; }
+.hc .cmd .c{ display:inline-block; width:5px; height:11px; background:#8b7bff; margin-left:2px; animation:bl 1s step-end infinite; vertical-align:middle; }
+@keyframes bl{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+.hero-cta{ display:flex; gap:12px; justify-content:center; margin-top:30px; }
+.cta-btn{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; padding:12px 26px; border-radius:6px; text-decoration:none; cursor:pointer; transition:transform .25s,box-shadow .25s,background .25s,border-color .25s; }
+.cta-solid{ background:linear-gradient(135deg,#8b7bff,#6c5ce7); color:#06070b; font-weight:600; box-shadow:0 8px 30px -10px #8b7bff70; }
+.cta-solid:hover{ transform:translateY(-2px); box-shadow:0 12px 34px -8px #8b7bff90; }
+.cta-ghost{ border:1px solid #2d1f50; color:#c9c1ff; }
+.cta-ghost:hover{ border-color:#8b7bff; background:#0f0d20; transform:translateY(-2px); }
+@media(max-width:480px){ .hero-cta{ flex-direction:column; align-items:center; } .cta-btn{ width:200px; text-align:center; } }
+.scroll-h{ position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:2; font-size:8px; letter-spacing:.3em; text-transform:uppercase; color:#3a3055; animation:sp 2.5s ease-in-out infinite; }
+@keyframes sp{ 0%,100%{ opacity:.2; transform:translateX(-50%) translateY(0); } 50%{ opacity:.6; transform:translateX(-50%) translateY(6px); } }
+
+
+.ab-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center; }
+@media(max-width:840px){ .ab-grid{ grid-template-columns:1fr; gap:32px; } }
+.ab-text h3{ font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:500; margin-bottom:14px; color:#e2e0f0; }
+.ab-text h3 em{ font-style:normal; color:#8b7bff; }
+.ab-text .desc{ font-size:12.5px; line-height:2; color:#8983a8; margin-bottom:10px; }
+.ab-text .desc .hl{ color:#c9c1ff; }
+.ab-text .code-block{ background:#0a0818; border:1px solid #1a1230; border-radius:8px; padding:12px 14px; font-size:9.5px; line-height:1.7; color:#5f5a7a; margin:14px 0; overflow-x:auto; }
+.ab-text .code-block .k{ color:#8b7bff; } .ab-text .code-block .s{ color:#2dd4bf; } .ab-text .code-block .f{ color:#ff9d3d; } .ab-text .code-block .c{ color:#3f3a5f; }
+.cube-wrap{ width:100%; max-width:380px; aspect-ratio:1; margin:0 auto; border-radius:14px; overflow:hidden; background:#08070f; position:relative; border:1px solid #1a1230; }
+
+.skills{ margin-top:18px; }
+.skills .r{ display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.skills .r label{ font-size:8px; text-transform:uppercase; letter-spacing:.15em; min-width:85px; color:#6f6a8a; }
+.skills .tr{ flex:1; height:3px; background:#100d20; border-radius:2px; overflow:hidden; }
+.skills .fi{ height:100%; border-radius:2px; width:0; transition:width 1.1s cubic-bezier(.22,1,.36,1); }
+.skills .fi.c1{ background:#ff9d3d; } .skills .fi.c2{ background:#8b7bff; } .skills .fi.c3{ background:#2dd4bf; } .skills .fi.c4{ background:#6c5ce7; } .skills .fi.c5{ background:#4ee1b0; } .skills .fi.c6{ background:#ff6b6b; }
+.skills .fi.go.c1{ width:95%; } .skills .fi.go.c2{ width:88%; } .skills .fi.go.c3{ width:92%; } .skills .fi.go.c4{ width:82%; } .skills .fi.go.c5{ width:70%; } .skills .fi.go.c6{ width:75%; }
+
+
+.sv-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+@media(max-width:900px){ .sv-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:550px){ .sv-grid{ grid-template-columns:1fr; } }
+.sv-card{ background:#0a081ae0; backdrop-filter:blur(8px); border:1px solid #1a1230; border-radius:10px; padding:24px 22px; transition:border-color .3s,transform .3s,box-shadow .3s; position:relative; overflow:hidden; }
+.sv-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:1px; opacity:0; transition:opacity .4s; }
+.sv-card::after{ content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle,var(--glow) 0%,transparent 70%); opacity:0; transition:opacity .5s; pointer-events:none; }
+.sv-card.accent-fivem{ --glow:#ff9d3d10; } .sv-card.accent-discord{ --glow:#8b7bff10; } .sv-card.accent-web{ --glow:#2dd4bf10; }
+.sv-card.accent-ai{ --glow:#c9c1ff10; } .sv-card.accent-3d{ --glow:#4ee1b010; } .sv-card.accent-pc{ --glow:#ff6b6b10; }
+.sv-card:hover{ border-color:#3d2f60; transform:translateY(-4px); box-shadow:0 8px 30px -8px #00000080; }
+.sv-card:hover::before{ opacity:1; }
+.sv-card:hover::after{ opacity:1; }
+.sv-card.accent-fivem::before{ background:linear-gradient(90deg,transparent,#ff9d3d,transparent); }
+.sv-card.accent-discord::before{ background:linear-gradient(90deg,transparent,#8b7bff,transparent); }
+.sv-card.accent-web::before{ background:linear-gradient(90deg,transparent,#2dd4bf,transparent); }
+.sv-card.accent-ai::before{ background:linear-gradient(90deg,transparent,#c9c1ff,transparent); }
+.sv-card.accent-3d::before{ background:linear-gradient(90deg,transparent,#4ee1b0,transparent); }
+.sv-card.accent-pc::before{ background:linear-gradient(90deg,transparent,#ff6b6b,transparent); }
+.sv-card svg{ width:24px; height:24px; margin-bottom:10px; stroke-width:1.5; }
+.sv-card .ic1{ color:#ff9d3d; } .sv-card .ic2{ color:#8b7bff; } .sv-card .ic3{ color:#2dd4bf; } .sv-card .ic4{ color:#c9c1ff; } .sv-card .ic5{ color:#4ee1b0; } .sv-card .ic6{ color:#ff6b6b; }
+.sv-card h3{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:500; margin-bottom:5px; }
+.sv-card h3 .c1{ color:#ff9d3d; } .sv-card h3 .c2{ color:#8b7bff; } .sv-card h3 .c3{ color:#2dd4bf; } .sv-card h3 .c4{ color:#c9c1ff; } .sv-card h3 .c5{ color:#4ee1b0; } .sv-card h3 .c6{ color:#ff6b6b; }
+.sv-card p{ font-size:11px; line-height:1.9; color:#847fa0; }
+.sv-card .st{ display:flex; flex-wrap:wrap; gap:4px; margin-top:10px; }
+.sv-card .st span{ font-size:7px; padding:2px 8px; border-radius:6px; background:#0f0d1f; border:1px solid #1a1230; color:#5f5a7a; text-transform:uppercase; letter-spacing:.08em; }
+
+
+.pr-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+@media(max-width:700px){ .pr-grid{ grid-template-columns:1fr; } }
+.pr-card{ background:#0a081ae0; backdrop-filter:blur(8px); border:1px solid #1a1230; border-radius:10px; padding:22px; transition:border-color .3s,transform .3s,box-shadow .3s; position:relative; overflow:hidden; }
+.pr-card:hover{ border-color:#3d2f60; transform:translateY(-3px); box-shadow:0 8px 30px -8px #00000080; }
+.pr-card::before{ content:''; position:absolute; inset:0; background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%),#8b7bff08,transparent 60%); opacity:0; transition:opacity .4s; pointer-events:none; }
+.pr-card:hover::before{ opacity:1; }
+.pr-card .top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.pr-card .top .folder svg{ width:20px; height:20px; color:#8b7bff; }
+.pr-card .top .links{ display:flex; gap:8px; }
+.pr-card .top .links svg{ width:16px; height:16px; color:#4f4a6f; transition:color .2s; cursor:pointer; }
+.pr-card .top .links svg:hover{ color:#c9c1ff; }
+.pr-card h4{ font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:500; margin-bottom:4px; color:#e2e0f0; }
+.pr-card p{ font-size:10.5px; line-height:1.85; color:#847fa0; }
+.pr-card .st{ display:flex; flex-wrap:wrap; gap:4px; margin-top:10px; }
+.pr-card .st span{ font-size:7px; padding:2px 7px; border-radius:5px; background:#0f0d1f; border:1px solid #1a1230; color:#5f5a7a; }
+
+
+.term-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:stretch; margin-top:14px; }
+@media(max-width:860px){ .term-grid{ grid-template-columns:1fr; } }
+.panels-wrap{ position:relative; border-radius:10px; overflow:hidden; background:#08070f; border:1px solid #1a1230; min-height:400px; }
+.panels-wrap canvas{ display:block; width:100% !important; height:100% !important; }
+.term{ background:#08060f; border:1px solid #1a1230; border-radius:10px; overflow:hidden; }
+.term .bar{ display:flex; align-items:center; gap:8px; padding:10px 14px; background:#0c0a1a; border-bottom:1px solid #1a1230; }
+.term .bar .dot{ width:8px; height:8px; border-radius:50%; }
+.term .bar .dot.r{ background:#ff5f57; } .term .bar .dot.y{ background:#ffbd2e; } .term .bar .dot.g{ background:#28c840; }
+.term .bar .t{ font-size:8px; color:#3f3a5f; letter-spacing:.1em; margin-left:8px; }
+.term .body{ padding:14px 16px; font-size:10.5px; line-height:1.9; color:#8983a8; max-height:260px; overflow-y:auto; }
+.term .body .p{ color:#2dd4bf; }
+.term .body .o{ color:#c9c1ff; }
+.term .body .e{ color:#ff6b6b; }
+.term .body .s{ color:#ff9d3d; }
+.term .body .d{ color:#3f3a5f; }
+
+
+.tray-grid{ position:relative; display:flex; flex-direction:column; max-width:760px; margin:0 auto; padding-left:28px; }
+.tray-grid::before{ content:''; position:absolute; left:5px; top:10px; bottom:10px; width:1px; background:linear-gradient(180deg,#8b7bff70,#2d1f50 80%,transparent); }
+.tray-card{ position:relative; background:#0a081ae0; backdrop-filter:blur(8px); border:1px solid #1a1230; border-radius:8px; padding:14px 20px; margin-bottom:12px; transition:border-color .25s,transform .25s; }
+.tray-card:hover{ border-color:#3d2f60; transform:translateX(5px); }
+.tray-card::before{ content:''; position:absolute; left:-28px; top:20px; width:10px; height:10px; border-radius:50%; background:#08070f; border:2px solid #8b7bff; box-shadow:0 0 0 4px #06070b; }
+.tray-card:nth-child(6n+1)::before{ border-color:#ff9d3d; } .tray-card:nth-child(6n+2)::before{ border-color:#8b7bff; } .tray-card:nth-child(6n+3)::before{ border-color:#2dd4bf; }
+.tray-card:nth-child(6n+4)::before{ border-color:#4ee1b0; } .tray-card:nth-child(6n+5)::before{ border-color:#c9c1ff; } .tray-card:nth-child(6n)::before{ border-color:#ff6b6b; }
+.tray-card .period{ font-size:7px; letter-spacing:.15em; text-transform:uppercase; color:#847fa0; margin-bottom:2px; }
+.tray-card h4{ font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:500; color:#e2e0f0; }
+.tray-card h4 .c1{ color:#ff9d3d; } .tray-card h4 .c2{ color:#8b7bff; } .tray-card h4 .c3{ color:#2dd4bf; } .tray-card h4 .c4{ color:#4ee1b0; } .tray-card h4 .c5{ color:#c9c1ff; } .tray-card h4 .c6{ color:#ff6b6b; }
+.tray-card p{ font-size:10px; color:#847fa0; line-height:1.75; margin-top:4px; }
+@media(max-width:480px){ .tray-grid{ padding-left:22px; } .tray-card{ padding:12px 14px; } .tray-card::before{ left:-22px; } }
+
+
+.sh-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
+.sh-card{ background:#0a081ae0; backdrop-filter:blur(8px); border:1px solid #1a1230; border-radius:10px; overflow:hidden; transition:border-color .3s,transform .3s; }
+.sh-card:hover{ border-color:#3d2f60; transform:translateY(-3px); }
+.sh-card img{ width:100%; height:180px; object-fit:cover; display:block; background:#08070f; cursor:pointer; transition:transform .3s; }
+.sh-card img:hover{ transform:scale(1.03); }
+#lightbox{ position:fixed; inset:0; z-index:9999; background:#06070bf5; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .4s ease; cursor:pointer; }
+#lightbox.open{ opacity:1; pointer-events:auto; }
+#lightbox img{ max-width:90vw; max-height:90vh; border-radius:8px; border:1px solid #2d1f50; transform:scale(0.85); transition:transform .4s cubic-bezier(.34,1.56,.64,1); box-shadow:0 0 80px #00000060; }
+#lightbox.open img{ transform:scale(1); }
+#lightbox .close{ position:fixed; top:24px; right:28px; width:36px; height:36px; border-radius:50%; border:1px solid #3d2f60; background:#0a081ae0; color:#8b7bff; font-size:16px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .2s,transform .2s; }
+#lightbox .close:hover{ border-color:#8b7bff; transform:rotate(90deg); }
+.sh-card .body{ padding:14px 16px; }
+.sh-card .body .tag{ font-size:7px; text-transform:uppercase; letter-spacing:.15em; color:#8b7bff; margin-bottom:2px; }
+.sh-card .body h4{ font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:500; }
+.sh-card .body p{ font-size:10px; color:#847fa0; line-height:1.75; margin-top:3px; }
+
+
+.ex{ text-align:center; }
+.ex h2{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:500; margin-bottom:4px; }
+.ex h2 em{ font-style:normal; color:#4ee1b0; }
+.ex .dx{ font-size:10px; color:#4f4a6f; margin-bottom:24px; letter-spacing:.1em; }
+.ex-g{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; text-align:left; }
+@media(max-width:800px){ .ex-g{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:450px){ .ex-g{ grid-template-columns:1fr; } }
+.ex-it{ background:#0a081ae0; backdrop-filter:blur(8px); border:1px solid #1a2822; border-radius:8px; padding:16px 18px; }
+.ex-it .tg{ font-size:7px; text-transform:uppercase; letter-spacing:.2em; color:#4ee1b0; margin-bottom:3px; }
+.ex-it h4{ font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:500; margin-bottom:2px; }
+.ex-it p{ font-size:10px; color:#847fa0; line-height:1.8; }
+
+
+.ct{ text-align:center; }
+.ct h2{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:500; margin-bottom:4px; }
+.ct h2 em{ font-style:normal; color:#8b7bff; }
+.ct .dx{ font-size:10px; color:#4f4a6f; margin-bottom:28px; }
+.ct-l{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+.ct-l a{ display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border:1px solid #2d1f50; border-radius:6px; color:#c9c1ff; text-decoration:none; font-size:9px; transition:border-color .2s,background .2s,transform .2s,box-shadow .2s; }
+.ct-l a:hover{ border-color:#6c5ce7; background:#0f0d20; transform:translateY(-2px); box-shadow:0 4px 20px -6px #8b7bff40; }
+.ct-l a svg{ width:13px; height:13px; }
+.ct-copy{ display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border:1px solid #2d1f50; border-radius:6px; background:transparent; color:#c9c1ff; font-family:'JetBrains Mono',monospace; font-size:9px; cursor:pointer; transition:border-color .2s,background .2s,transform .2s,box-shadow .2s; }
+.ct-copy:hover{ border-color:#6c5ce7; background:#0f0d20; transform:translateY(-2px); box-shadow:0 4px 20px -6px #8b7bff40; }
+.ct-copy.copied{ border-color:#2dd4bf; color:#2dd4bf; }
+.ct-copy svg{ width:13px; height:13px; }
+
+
+footer{ position:relative; z-index:2; text-align:center; padding:24px; font-size:9px; color:#524a75; letter-spacing:.2em; text-transform:uppercase; border-top:1px solid #0f0d20; }
+.dv{ position:relative; z-index:2; height:1px; background:linear-gradient(90deg,transparent,#2d1f50,transparent); margin:0 28px; }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div id="bg-particles"></div>
+
+<header>
+  <div class="logo">~/maru<span>.</span></div>
+  <nav>
+    <a data-scroll="about">about</a>
+    <a data-scroll="services">servicios</a>
+    <a data-scroll="trayectoria">trayectoria</a>
+    <a data-scroll="showcase">showcase</a>
+    <a data-scroll="projects">proyectos</a>
+    <a data-scroll="extra">extra</a>
+    <a data-scroll="contact">contacto</a>
+  </nav>
+  <div class="burger" id="burger" role="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></div>
+</header>
+
+<section id="hero">
+  <div class="hero-3d" id="hero-canvas"></div>
+  <div class="hero-fade"></div>
+  <div class="hc wrap">
+    <div class="badge">dev &amp; script creator</div>
+    <h1>MARU</h1>
+    <div class="sub">Fullstack · FiveM · Discord Bots · Web · 3D</div>
+    <div class="tags">
+      <span>HTML/CSS</span><span>JavaScript</span><span>Lua</span>
+      <span>Node.js</span><span>Three.js</span><span>discord.js</span><span>React</span>
+      <span>Git</span>
+    </div>
+    <div class="cmd"><span class="p">maru@dev</span>:~$ <span id="typing"></span><span class="c"></span></div>
+    <div class="hero-cta">
+      <a class="cta-btn cta-solid" data-scroll="projects">ver proyectos</a>
+      <a class="cta-btn cta-ghost" data-scroll="contact">contactar</a>
+    </div>
+  </div>
+  <div class="scroll-h">scroll ↓</div>
+</section>
+
+<div class="dv"></div>
+
+<section id="about">
+  <div class="shade"></div>
+  <div class="wrap">
+    <div class="shead"><span class="num">01</span><h2>about</h2><div class="line"></div></div>
+    <div class="ab-grid">
+      <div class="ab-text">
+        <h3><em>whoami</em> — maru</h3>
+        <p class="desc">Desarrollador fullstack con enfoque en <span class="hl">FiveM</span>, <span class="hl">Discord bots</span> y <span class="hl">web</span>. Escribo en HTML, JS y Lua. Creo scripts desde cero, modifico y dise&ntilde;o sistemas avanzados, y uso IA como acelerador de desarrollo.</p>
+        <p class="desc">Tambi&eacute;n creo <span class="hl">animaciones 3D</span> con Three.js, estoy aprendiendo <span class="hl">APPs</span> y en estos momentos desarrollo un <span class="hl">optimizador para PC</span>.</p>
+        <div class="code-block">
+          <span class="k">const</span> maru = {<br>
+          &nbsp;&nbsp;name: <span class="s">"Maru"</span>,<br>
+          &nbsp;&nbsp;role: <span class="s">"Fullstack Developer"</span>,<br>
+          &nbsp;&nbsp;languages: [<span class="s">"HTML"</span>, <span class="s">"JS"</span>, <span class="s">"Lua"</span>],<br>
+          &nbsp;&nbsp;platforms: [<span class="s">"FiveM"</span>, <span class="s">"Discord"</span>, <span class="s">"Web"</span>, <span class="s">"Minecraft"</span>],<br>
+          &nbsp;&nbsp;<span class="f">status</span>: <span class="s">"open to work"</span><br>
+          };<span class="c"> 
+        </div>
+        <div class="skills" id="skillBars">
+          <div class="r"><label>HTML/CSS</label><div class="tr"><div class="fi c1"></div></div></div>
+          <div class="r"><label>JavaScript</label><div class="tr"><div class="fi c2"></div></div></div>
+          <div class="r"><label>Lua</label><div class="tr"><div class="fi c3"></div></div></div>
+          <div class="r"><label>Node.js</label><div class="tr"><div class="fi c4"></div></div></div>
+          <div class="r"><label>Three.js</label><div class="tr"><div class="fi c6"></div></div></div>
+        </div>
+      </div>
+      <div class="cube-wrap" id="cube-wrap"></div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"></div>
+
+<section id="services">
+  <div class="shade"></div>
+  <div class="wrap">
+    <div class="shead"><span class="num">02</span><h2>servicios</h2><div class="line"></div></div>
+    <div class="sv-grid">
+      <div class="sv-card accent-fivem">
+        <svg class="ic1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <h3><span class="c1">FiveM Scripting</span></h3>
+        <p>Servidores desde 0. Creaci&oacute;n, modificaci&oacute;n y dise&ntilde;o de scripts ESX, QBCore y standalone. Meterols, veh&iacute;culos, sistemas avanzados de econom&iacute;a y facciones.</p>
+        <div class="st"><span>Lua</span><span>ESX</span><span>QBCore</span><span>MySQL</span><span>JavaScript</span></div>
+      </div>
+      <div class="sv-card accent-discord">
+        <svg class="ic2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 2.2-.7 4.2-1.9 5.9l-2.5-2.5A6 6 0 0 0 12 6"/><path d="M6.5 6.5A6 6 0 0 0 12 18c1.2 0 2.3-.3 3.2-.9l2.5 2.5A10 10 0 0 1 2 12"/></svg>
+        <h3><span class="c2">Discord Bots</span></h3>
+        <p>Bots avanzados con discord.js. Moderaci&oacute;n, econom&iacute;a, tickets, logs, dashboards web integrados, comandos por slash, sistemas multigremio y APIs externas.</p>
+        <div class="st"><span>discord.js</span><span>Node.js</span><span>MongoDB</span><span>REST</span><span>WebSocket</span></div>
+      </div>
+      <div class="sv-card accent-web">
+        <svg class="ic3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <h3><span class="c3">Web Development</span></h3>
+        <p>P&aacute;ginas minimalistas y funcionales. Animaciones 3D con Three.js, dashboards interactivos, landing pages, sistemas responsive con dise&ntilde;o moderno.</p>
+        <div class="st"><span>React</span><span>Three.js</span><span>Tailwind</span><span>HTML/CSS</span><span>Node</span></div>
+      </div>
+      <div class="sv-card accent-ai">
+        <svg class="ic4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 2.2-.7 4.2-1.9 5.9"/><path d="M6.8 6.8A6 6 0 0 0 12 18"/><circle cx="12" cy="12" r="2"/></svg>
+        <h3><span class="c4">AI Scripting</span></h3>
+        <p>Uso de IA para generar, optimizar y depurar scripts. Automatizaci&oacute;n de flujos de trabajo, generaci&oacute;n de c&oacute;digo y prototipado ultrarr&aacute;pido.</p>
+        <div class="st"><span>GPT-4</span><span>Claude</span><span>APIs</span><span>Prompts</span></div>
+      </div>
+      <div class="sv-card accent-3d">
+        <svg class="ic5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
+        <h3><span class="c5">3D Animations</span></h3>
+        <p>Animaciones 3D generadas con <span class="hl">IA</span> y Three.js. Escenas inmersivas, modelos low-poly, part&iacute;culas, efectos visuales para webs, portafolios y showcases.</p>
+        <div class="st"><span>Three.js</span><span>IA</span><span>WebGL</span><span>JavaScript</span></div>
+      </div>
+      <div class="sv-card accent-pc">
+        <svg class="ic6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <h3><span class="c6">PC Optimizer</span><span class="badge-prox">Proximamente...</span></h3>
+        <p>App optimizadora para PC. Limpieza de archivos temporales, ajustes de rendimiento, monitoreo de hardware y desfragmentaci&oacute;n inteligente.</p>
+        <div class="st"><span>C++</span><span>Electron</span><span class="tag-prox">Proximamente</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"></div>
+
+<section id="trayectoria">
+  <div class="shade"></div>
+  <div class="wrap">
+    <div class="shead"><span class="num">03</span><h2>trayectoria</h2><div class="line"></div></div>
+    <div class="tray-grid">
+      <div class="tray-card">
+        <div class="period">2025 — presente</div>
+        <h4><span class="c2">Union RP</span></h4>
+        <p>Arreglo y optimizaci&oacute;n de scripts existentes. Correcci&oacute;n de errores, mejora de rendimiento y mantenimiento de sistemas del servidor.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2024 — 2025</div>
+        <h4><span class="c1">Furia Network RP</span></h4>
+        <p>Meter scripts, arreglarlos, fixear errores, meter PEDs, coches y mantener los sistemas del servidor FiveM.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2024 — presente</div>
+        <h4><span class="c3">Orion Network</span></h4>
+        <p>Colaboraci&oacute;n con empresa de infraestructura FiveM. Desarrollo de scripts, configuraci&oacute;n de servidores y soporte t&eacute;cnico.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2025</div>
+        <h4><span class="c4">Hostana Network</span></h4>
+        <p>Colaboraci&oacute;n con empresa de hosting y redes. Desarrollo de scripts, optimizaci&oacute;n de servidores y asesoramiento t&eacute;cnico.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2024 — 2025</div>
+        <h4><span class="c5">DF Network</span></h4>
+        <p>Trabajador Auxiliar y creador de scripts. Desarrollo de sistemas internos, mantenimiento de servidores y creaci&oacute;n de scripts personalizados.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2024 — 2025</div>
+        <h4><span class="c6">Urban RP</span></h4>
+        <p>Fix de errores y optimizaci&oacute;n de scripts en servidor FiveM. Depuraci&oacute;n de c&oacute;digo, correcci&oacute;n de bugs y mejora de rendimiento.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2024 — 2025</div>
+        <h4><span class="c1">VPS &amp; Cloud</span></h4>
+        <p>Trabajo en empresa de VPS y Cloud. Gesti&oacute;n de servidores virtuales, configuraci&oacute;n de redes y soporte a clientes.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2024 — 2025</div>
+        <h4><span class="c2">Quita Marcas (FiveM)</span></h4>
+        <p>Modificaci&oacute;n de veh&iacute;culos FiveM para eliminar marcas comerciales. Adaptaci&oacute;n de modelos, texturizado y optimizaci&oacute;n para servidores roleplay.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2025</div>
+        <h4><span class="c3">Script Camionero</span></h4>
+        <p>Fund&eacute; mi primer script de camionero para FiveM. Sistema completo de transporte, entregas, contratos y personalizaci&oacute;n de camiones.</p>
+      </div>
+      <div class="tray-card">
+        <div class="period">2025</div>
+        <h4><span class="c4">Astri Hub (Minecraft)</span></h4>
+        <p>Fund&eacute; mi primera empresa de Minecraft. Servidor con sistemas avanzados, plugins personalizados y econom&iacute;a &uacute;nica.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"></div>
+
+<section id="showcase">
+  <div class="shade"></div>
+  <div class="wrap">
+    <div class="shead"><span class="num">04</span><h2>showcase</h2><div class="line"></div></div>
+    <div class="sh-grid">
+      <div class="sh-card">
+        <img src="img/hud.png" alt="HUD" loading="lazy">
+        <div class="body">
+          <div class="tag">FiveM · UI</div>
+          <h4>HUD Personalizado</h4>
+          <p>Interfaz de usuario completa para servidor FiveM con diseño minimalista, indicadores en tiempo real y optimización de rendimiento.</p>
+        </div>
+      </div>
+      <div class="sh-card">
+        <img src="img/jail_1.png" alt="Jail IC" loading="lazy">
+        <div class="body">
+          <div class="tag">FiveM · Sistema</div>
+          <h4>Sistema de Jail (IC)</h4>
+          <p>Sistema de c&aacute;rcel administrativo y policial con interfaz in-game. Celdas, temporizadores, puntos de control y gesti&oacute;n de reclusos.</p>
+        </div>
+      </div>
+      <div class="sh-card">
+        <img src="img/jail_2.png" alt="Jail Discord Log" loading="lazy">
+        <div class="body">
+          <div class="tag">Discord · Logs</div>
+          <h4>Sistema de Jail (Logs)</h4>
+          <p>Registro autom&aacute;tico de todas las acciones del sistema de jail en Discord. Motivo, tiempo, oficial y recluso con enlaces de evidencia.</p>
+        </div>
+      </div>
+      <div class="sh-card">
+        <img src="img/truker_job.png" alt="Camionero Job" loading="lazy">
+        <div class="body">
+          <div class="tag">FiveM · Script</div>
+          <h4>Trucker Job</h4>
+          <p>Mi primer script de camionero fundado en 2025. Sistema de transporte, contratos, rutas din&aacute;micas y personalizaci&oacute;n de veh&iacute;culos.</p>
+        </div>
+      </div>
+      <div class="sh-card">
+        <img src="img/astrihub.png" alt="Astri Hub" loading="lazy">
+        <div class="body">
+          <div class="tag">Minecraft · 2025</div>
+          <h4>Astri Hub</h4>
+          <p>Mi primera empresa de Minecraft. Servidor con econom&iacute;a, protecciones, minijuegos y comunidad activa. Fundado en 2025.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"></div>
+
+<section id="projects">
+  <div class="shade"></div>
+  <div class="wrap">
+    <div class="shead"><span class="num">05</span><h2>proyectos</h2><div class="line"></div></div>
+
+
+    <div class="pr-grid">
+      <div class="pr-card">
+        <div class="top">
+          <div class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="links">
+            <svg style="cursor:default;opacity:.4;" title="Repositorio privado por ahora" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <svg style="cursor:default;opacity:.4;" title="Aún sin demo pública" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+        </div>
+        <h4>Seduct <span class="badge-prox">En desarrollo</span></h4>
+        <p>App de gesti&oacute;n de contrase&ntilde;as encriptadas. Desarrollada con un equipo de programadores. Seguridad extrema, cifrado de extremo a extremo y UI minimalista.</p>
+        <div class="st"><span>Electron</span><span>Node.js</span><span>Encryption</span><span>Equipo</span></div>
+      </div>
+      <div class="pr-card">
+        <div class="top">
+          <div class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="links">
+            <a href="https:
+            <a href="https:
+          </div>
+        </div>
+        <h4>Discord Moderation Bot</h4>
+        <p>Bot de moderaci&oacute;n avanzado con sistema de tickets, logs autom&aacute;ticos, moderaci&oacute;n por IA, econom&iacute;a global, niveles y dashboard web en tiempo real.</p>
+        <div class="st"><span>discord.js</span><span>MongoDB</span><span>React</span><span>Socket.io</span></div>
+      </div>
+      <div class="pr-card">
+        <div class="top">
+          <div class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="links">
+            <a href="https:
+            <a href="https:
+          </div>
+        </div>
+        <h4>Portfolio Dev</h4>
+        <p>Este portafolio. Animaciones 3D generadas con <span class="hl">IA</span> + Three.js, part&iacute;culas interactivas, dise&ntilde;o oscuro minimalista y efectos visuales avanzados.</p>
+        <div class="st"><span>Three.js</span><span>IA</span><span>WebGL</span><span>HTML/CSS</span></div>
+      </div>
+      <div class="pr-card">
+        <div class="top">
+          <div class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="links">
+            <a href="https:
+            <a href="https:
+          </div>
+        </div>
+        <h4>PC Optimizer Tool <span class="badge-prox">Proximamente...</span></h4>
+        <p>App de escritorio para optimizaci&oacute;n de PC. Limpieza profunda, gesti&oacute;n de inicio, monitoreo de CPU/RAM, desfragmentaci&oacute;n y ajustes de rendimiento.</p>
+        <div class="st"><span>Electron</span><span>C++</span><span class="tag-prox">Proximamente</span></div>
+      </div>
+      <div class="pr-card">
+        <div class="top">
+          <div class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="links">
+            <a href="https:
+            <a href="https:
+          </div>
+        </div>
+        <h4>AirPDA RP Bot</h4>
+        <p>Bot de rol para servidores de FiveM con sistema de PDA avanzado, gestion de personajes, econom&iacute;a y facciones. Integraci&oacute;n con base de datos en tiempo real.</p>
+        <div class="st"><span>discord.js</span><span>Node.js</span><span>MongoDB</span><span>FiveM</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"></div>
+
+<section id="terminal">
+  <div class="shade"></div>
+  <div class="wrap">
+    <div class="shead"><span class="num">06</span><h2>terminal</h2><div class="line"></div></div>
+    <div class="term-grid">
+      <div class="term">
+        <div class="bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span class="t">maru@dev:~/portfolio</span>
+        </div>
+        <div class="body" id="termBody">
+          <div><span class="p">maru@dev</span>:<span class="d">~</span>$ <span class="o">cat</span> about.txt</div>
+          <div>Maru — Fullstack Developer &amp; Script Creator</div>
+          <div>Lenguajes: HTML, JS, Lua</div>
+          <div>Plataformas: FiveM, Discord, Web, Minecraft</div>
+          <div>Estado: disponible para proyectos</div>
+          <div>&nbsp;</div>
+          <div><span class="p">maru@dev</span>:<span class="d">~</span>$ <span class="o">ls</span> projects/</div>
+          <div>seduct/&nbsp;&nbsp;&nbsp;moderation-bot/&nbsp;&nbsp;&nbsp;portfolio-3d/&nbsp;&nbsp;&nbsp;pc-optimizer/&nbsp;&nbsp;&nbsp;airpda-bot/</div>
+          <div>&nbsp;</div>
+          <div><span class="p">maru@dev</span>:<span class="d">~</span>$ <span class="o">cat</span> skills.lua</div>
+          <div><span class="s">-- habilidades principales</span></div>
+          <div>skills = {</div>
+          <div>&nbsp;&nbsp;<span class="o">FiveM</span>      = <span class="s">"ESX / QBCore / Standalone"</span>,</div>
+          <div>&nbsp;&nbsp;<span class="o">Discord</span>    = <span class="s">"discord.js / Node.js / MongoDB"</span>,</div>
+          <div>&nbsp;&nbsp;<span class="o">Web</span>        = <span class="s">"React / Three.js / Tailwind"</span>,</div>
+          <div>&nbsp;&nbsp;<span class="o">Minecraft</span>  = <span class="s">"Spigot / Paper / Datapacks"</span>,</div>
+          <div>}</div>
+          <div>&nbsp;</div>
+          <div><span class="p">maru@dev</span>:<span class="d">~</span>$ <span class="o">echo</span> $STATUS</div>
+          <div><span class="s">open to work</span></div>
+          <div>&nbsp;</div>
+          <div><span class="p">maru@dev</span>:<span class="d">~</span>$ <span class="c">_</span></div>
+        </div>
+      </div>
+      <div class="panels-wrap" id="panels-canvas"></div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"></div>
+
+<section id="extra">
+  <div class="shade"></div>
+  <div class="wrap ex">
+    <div class="shead" style="justify-content:center;"><span class="num">07</span><h2>extra</h2><div class="line" style="display:none;"></div></div>
+    <h2>minecraft <em>server dev</em></h2>
+    <p class="dx">programo servidores de Minecraft desde 0 &middot; fund&eacute; <span style="color:#4ee1b0;">Astri Hub</span> en 2025</p>
+    <div class="ex-g">
+      <div class="ex-it">
+        <div class="tg">plugins</div>
+        <h4>Spigot / Paper</h4>
+        <p>Plugins en Java con Paper API. Econom&iacute;a, minijuegos, custom items, protecciones.</p>
+      </div>
+      <div class="ex-it">
+        <div class="tg">configuraci&oacute;n</div>
+        <h4>Servidores desde 0</h4>
+        <p>Montaje, configuraci&oacute;n y optimizaci&oacute;n: spigot.yml, bukkit.yml, paper.yml, aikkar flags.</p>
+      </div>
+      <div class="ex-it">
+        <div class="tg">comandos</div>
+        <h4>Systems a medida</h4>
+        <p>Rangos, misiones diarias, protecci&oacute;n de terrenos, eventos autom&aacute;ticos y sistemas de votaci&oacute;n.</p>
+      </div>
+      <div class="ex-it">
+        <div class="tg">datapacks</div>
+        <h4>Functions &amp; JSON</h4>
+        <p>Datapacks personalizados, loot tables, recipes, funciones con JSON y mec&aacute;nicas avanzadas.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;">
+      <h2><em>editor</em> &amp; <em style="color:#ff9d3d;">miniaturista</em></h2>
+      <p class="dx">adem&aacute;s de dev, tambi&eacute;n edito v&iacute;deos y creo miniaturas</p>
+      <a href="https:
+    </div>
+  </div>
+  <div class="shade" style="background:linear-gradient(180deg,#06070b00 0%,#06070b00 75%,#06070b90 100%);"></div>
+</section>
+
+<section id="contact" style="background:#06070b;background-image:radial-gradient(ellipse 70% 55% at 22% 30%,#6c5ce73d 0%,transparent 70%),radial-gradient(ellipse 70% 55% at 78% 65%,#8b7bff3a 0%,transparent 70%),radial-gradient(ellipse 90% 60% at 50% 105%,#2dd4bf1f 0%,transparent 70%);">
+  <div class="shade" style="background:linear-gradient(180deg,#06070b 0%,#06070b00 22%,#06070b00 62%,#06070b 100%);"></div>
+  <div class="wrap ct">
+    <div class="shead" style="justify-content:center;"><span class="num">08</span><h2>contacto</h2><div class="line" style="display:none;"></div></div>
+    <h2><em>maru</em> / disponible</h2>
+    <p class="dx">proyectos &middot; colaboraciones &middot; freelance</p>
+    <div class="ct-l">
+      <a href="https:
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        discord &middot; 1037473407756935218
+      </a>
+      <button type="button" class="ct-copy" id="copyDiscord" data-id="1037473407756935218" aria-label="Copiar ID de Discord">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span id="copyLabel">copiar id</span>
+      </button>
+      <a href="https:
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        github.com/MaruMC123
+      </a>
+    </div>
+  </div>
+</section>
+
+<div id="lightbox"><span class="close">&times;</span><img id="lb-img" src="" alt=""></div>
+<div id="btt" style="position:fixed;bottom:24px;right:24px;z-index:999;width:36px;height:36px;border-radius:50%;border:1px solid #2d1f50;background:#0a081ae0;backdrop-filter:blur(8px);color:#8b7bff;font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:border-color .2s;" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">&#8593;</div>
+<footer>built by maru &middot; 2026</footer>
+<script>
+
+const btt = document.getElementById('btt');
+addEventListener('scroll', () => { btt.style.display = scrollY > 400 ? 'flex' : 'none'; btt.style.borderColor = scrollY > 400 ? '#5b4b9f' : '#2d1f50'; });
+
+
+const progressBar = document.getElementById('scroll-progress');
+addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  progressBar.style.width = pct + '%';
+});
+</script>
+
+<script type="importmap">
+{ "imports": { "three": "https:
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+
+{
+  const container = document.getElementById('bg-particles');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+  camera.position.set(0, 0, 8.5);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
+
+  function sampleText(text) {
+    const c = document.createElement('canvas');
+    c.width = 600; c.height = 200;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 600, 200);
+    ctx.fillStyle = '#fff';
+    ctx.font = '700 130px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, 300, 105);
+    const data = ctx.getImageData(0, 0, 600, 200).data;
+    const pts = [];
+    for (let y = 0; y < 200; y += 3) {
+      for (let x = 0; x < 600; x += 3) {
+        if (data[(y*600+x)*4+3] > 128) pts.push(new THREE.Vector3((x-300)/40, -(y-100)/40, (Math.random()-0.5)*0.4));
+      }
+    }
+    return pts;
+  }
+
+  const textPts = sampleText('MARU');
+  const n = textPts.length;
+  const spherePos = new Float32Array(n*3);
+  const targetPos = new Float32Array(n*3);
+  const currPos = new Float32Array(n*3);
+  const cols = new Float32Array(n*3);
+  const palette = [new THREE.Color(0x8b7bff), new THREE.Color(0x2dd4bf), new THREE.Color(0xff9d3d)];
+
+  for (let i = 0; i < n; i++) {
+    const r = 5 + Math.random()*2;
+    const t = Math.random()*Math.PI*2;
+    const p = Math.acos(Math.random()*2-1);
+    spherePos[i*3] = r*Math.sin(p)*Math.cos(t);
+    spherePos[i*3+1] = r*Math.sin(p)*Math.sin(t);
+    spherePos[i*3+2] = r*Math.cos(p);
+    targetPos[i*3] = textPts[i].x;
+    targetPos[i*3+1] = textPts[i].y;
+    targetPos[i*3+2] = textPts[i].z;
+    currPos[i*3] = spherePos[i*3];
+    currPos[i*3+1] = spherePos[i*3+1];
+    currPos[i*3+2] = spherePos[i*3+2];
+    const col = palette[i%3];
+    cols[i*3] = col.r; cols[i*3+1] = col.g; cols[i*3+2] = col.b;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(currPos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+  const mat = new THREE.PointsMaterial({ size: 0.04, vertexColors: true, transparent: true, opacity: 0.25, depthWrite: false, blending: THREE.AdditiveBlending });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+  scene.add(new THREE.AmbientLight(0x222233, 1));
+
+  function easeInOut(t) { return t<0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  const CYCLE = 10;
+  const clock = new THREE.Clock();
+  const posAttr = geo.attributes.position;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+    const cyclePos = (t % CYCLE) / CYCLE;
+    let mixAmt;
+    if (cyclePos < 0.35) mixAmt = easeInOut(cyclePos/0.35);
+    else if (cyclePos < 0.65) mixAmt = 1;
+    else if (cyclePos < 1.0) mixAmt = 1 - easeInOut((cyclePos-0.65)/0.35);
+    else mixAmt = 0;
+
+    for (let i = 0; i < n; i++) {
+      const ix = i*3;
+      currPos[ix] = spherePos[ix] + (targetPos[ix]-spherePos[ix])*mixAmt;
+      currPos[ix+1] = spherePos[ix+1] + (targetPos[ix+1]-spherePos[ix+1])*mixAmt;
+      currPos[ix+2] = spherePos[ix+2] + (targetPos[ix+2]-spherePos[ix+2])*mixAmt;
+    }
+    posAttr.needsUpdate = true;
+    points.rotation.y = t * 0.04;
+    points.rotation.x = Math.sin(t * 0.1) * 0.05;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  addEventListener('resize', () => {
+    const w = container.clientWidth, h = container.clientHeight;
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+}
+
+
+{
+  const container = document.getElementById('hero-canvas');
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x06070b, 0.03);
+  const w = container.clientWidth, h = container.clientHeight;
+  const camera = new THREE.PerspectiveCamera(48, w/h, 0.1, 100);
+  camera.position.set(0, 0, 7);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(w, h);
+  container.appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0x201a30, 1.1));
+  const kl = new THREE.PointLight(0x8b7bff, 3, 20); kl.position.set(3,3,5); scene.add(kl);
+  const fl = new THREE.PointLight(0xff9d3d, 1.5, 20); fl.position.set(-4,-2,3); scene.add(fl);
+
+  const knot = new THREE.Mesh(
+    new THREE.TorusKnotGeometry(1.35, 0.4, 160, 20, 2, 3),
+    new THREE.MeshStandardMaterial({ color:0x6c5ce7, emissive:0x3d2fb0, emissiveIntensity:0.5, roughness:0.25, metalness:0.6 })
+  );
+  scene.add(knot);
+  const kw = new THREE.Mesh(
+    new THREE.TorusKnotGeometry(1.42, 0.42, 100, 12, 2, 3),
+    new THREE.MeshBasicMaterial({ color:0xc9c1ff, wireframe:true, transparent:true, opacity:0.2 })
+  );
+  scene.add(kw);
+
+  const pc = 600;
+  const pos = new Float32Array(pc*3);
+  for (let i=0;i<pc;i++) {
+    const r=6+Math.random()*8, t=Math.random()*Math.PI*2, p=Math.acos(Math.random()*2-1);
+    pos[i*3]=r*Math.sin(p)*Math.cos(t); pos[i*3+1]=r*Math.sin(p)*Math.sin(t); pos[i*3+2]=r*Math.cos(p);
+  }
+  const pg=new THREE.BufferGeometry(); pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const pm=new THREE.PointsMaterial({color:0x8b7bff,size:0.035,transparent:true,opacity:0.6});
+  const pts=new THREE.Points(pg,pm); scene.add(pts);
+
+  let mx=0,my=0;
+  addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); });
+
+  const clock=new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    const t=clock.getElapsedTime();
+    knot.rotation.x=t*0.25; knot.rotation.y=t*0.35; kw.rotation.copy(knot.rotation);
+    pts.rotation.y=t*0.02;
+    knot.material.emissiveIntensity=0.4+Math.sin(t*1.5)*0.2;
+    camera.position.x+=(mx*1.4-camera.position.x)*0.04;
+    camera.position.y+=(-my*1.0-camera.position.y)*0.04;
+    camera.lookAt(0,0,0);
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  addEventListener('resize',()=>{
+    const w=container.clientWidth,h=container.clientHeight;
+    camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h);
+  });
+}
+
+
+{
+  const wrap = document.getElementById('cube-wrap');
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x08090d, 7, 20);
+  const w=wrap.clientWidth,h=wrap.clientHeight;
+  const camera = new THREE.PerspectiveCamera(45, w/h, 0.1, 100);
+  camera.position.set(0, 0.6, 6.5);
+  const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(w,h);
+  wrap.appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0x2a2a35,1.3));
+  const k=new THREE.DirectionalLight(0xffffff,0.9); k.position.set(4,6,6); scene.add(k);
+  const r=new THREE.PointLight(0x8b7bff,2,15); r.position.set(-3,-2,3); scene.add(r);
+
+  function ft(l,s,a){
+    const c=document.createElement('canvas'); c.width=400; c.height=400;
+    const ctx=c.getContext('2d');
+    ctx.fillStyle='#101218'; ctx.fillRect(0,0,400,400);
+    ctx.strokeStyle=a; ctx.lineWidth=6; ctx.strokeRect(10,10,380,380);
+    ctx.fillStyle=a; ctx.beginPath(); ctx.arc(60,60,10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#f2f0fb'; ctx.font='700 40px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(l,200,210); ctx.font='500 18px monospace'; ctx.fillStyle=a; ctx.fillText(s,200,250);
+    return new THREE.CanvasTexture(c);
+  }
+
+  const faces=[
+    ['FiveM','Lua . ESX/QB','#ff9d3d'],['Discord','discord.js . Node','#8b7bff'],
+    ['Web','React . Next.js','#2dd4bf'],['Bases','MySQL . Mongo','#2dd4bf'],
+    ['APIs','REST . WS','#8b7bff'],['UI/UX','Figma . Tailwind','#ff9d3d'],
+  ];
+  const cube=new THREE.Mesh(new THREE.BoxGeometry(2.6,2.6,2.6),
+    faces.map(([l,s,a])=>new THREE.MeshStandardMaterial({map:ft(l,s,a),roughness:0.55,metalness:0.15})));
+  scene.add(cube);
+  const ed=new THREE.LineSegments(new THREE.EdgesGeometry(cube.geometry),new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:0.15}));
+  cube.add(ed);
+
+  let mx=0,my=0;
+  addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); });
+  const clock=new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    const t=clock.getElapsedTime();
+    cube.rotation.y=t*0.35+mx*0.6; cube.rotation.x=Math.sin(t*0.3)*0.2+my*0.4;
+    renderer.render(scene,camera);
+  }
+  animate();
+  addEventListener('resize',()=>{ const w=wrap.clientWidth,h=wrap.clientHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h); });
+}
+
+
+{
+  const container = document.getElementById('panels-canvas');
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x070c0b, 8, 22);
+  const w=container.clientWidth,h=container.clientHeight;
+  const camera = new THREE.PerspectiveCamera(50, w/h, 0.1, 100);
+  camera.position.set(0, 0.5, 9);
+  const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(w, h);
+  container.appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0x1a2a28, 1.4));
+  const key = new THREE.DirectionalLight(0x6ffbe4, 1.0);
+  key.position.set(4,6,8);
+  scene.add(key);
+
+  function codeTexture(labelLines, accent){
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 320;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#0c1615';
+    ctx.fillRect(0,0,512,320);
+    ctx.fillStyle = '#12211f';
+    ctx.fillRect(0,0,512,34);
+    ['#2c4441','#2c4441','#2c4441'].forEach((col,i)=>{
+      ctx.fillStyle = col; ctx.beginPath();
+      ctx.arc(20+i*18, 17, 5, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.font = '15px monospace';
+    labelLines.forEach((line, i) => {
+      ctx.fillStyle = i % 3 === 0 ? accent : '#9fd8cf';
+      ctx.globalAlpha = 0.9;
+      ctx.fillText(line, 24, 66 + i*26);
+    });
+    return new THREE.CanvasTexture(c);
+  }
+
+  const panelsData = [
+    { lines:['<nav class="top">','  <Logo />','</nav>','','<section class="hero">','  <h1>Hola, soy Maru</h1>','</section>'], accent:'#2dd4bf', pos:[-2.6, 0.6, 0.6], rotY: 0.35 },
+    { lines:['function build(){','  render(<App />)','}','','export default App','', 'status: compiling ✓'], accent:'#8b7bff', pos:[0, -0.4, 1.6], rotY: -0.08 },
+    { lines:['.card {','  border-radius: 12px;','  backdrop-filter: blur(6px);','}','', '','@media (max-width: 720px)'], accent:'#ff9d3d', pos:[2.7, 0.3, 0.2], rotY: -0.35 },
+  ];
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  panelsData.forEach((p, i) => {
+    const tex = codeTexture(p.lines, p.accent);
+    const geo = new THREE.PlaneGeometry(3.4, 2.15, 1, 1);
+    const mat = new THREE.MeshStandardMaterial({ map: tex, roughness:0.5, metalness:0.1, side:THREE.DoubleSide });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(...p.pos);
+    mesh.rotation.y = p.rotY;
+    mesh.userData.baseY = p.pos[1];
+    mesh.userData.phase = i * 1.4;
+
+    const edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(geo),
+      new THREE.LineBasicMaterial({ color: new THREE.Color(p.accent), transparent:true, opacity:0.6 })
+    );
+    mesh.add(edges);
+    group.add(mesh);
+  });
+
+  let mx=0,my=0;
+  addEventListener('pointermove', e => { mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); });
+
+  const clock = new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+    group.children.forEach(mesh => {
+      mesh.position.y = mesh.userData.baseY + Math.sin(t*0.8 + mesh.userData.phase) * 0.12;
+    });
+    group.rotation.y = mx * 0.3;
+    group.rotation.x = my * 0.15;
+    camera.position.x += (mx*1.2 - camera.position.x) * 0.04;
+    camera.lookAt(0,0,0);
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  addEventListener('resize',()=>{ const w=container.clientWidth,h=container.clientHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h); });
+}
+</script>
+
+<script>
+
+const navEl = document.querySelector('nav');
+const burgerEl = document.getElementById('burger');
+document.querySelectorAll('[data-scroll]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById(a.dataset.scroll).scrollIntoView({ behavior: 'smooth' });
+    navEl.classList.remove('open');
+    burgerEl.classList.remove('open');
+    burgerEl.setAttribute('aria-expanded', 'false');
+  });
+});
+burgerEl.addEventListener('click', () => {
+  const open = navEl.classList.toggle('open');
+  burgerEl.classList.toggle('open', open);
+  burgerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+
+
+const navLinks = document.querySelectorAll('nav a[data-scroll]');
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.toggle('active', l.dataset.scroll === e.target.id));
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('section[id]').forEach(s => navObs.observe(s));
+
+
+const phrases = [
+  'cat about.txt         # fullstack dev',
+  'cat skills.lua        # fivem . discord . web',
+  'ls projects/          # seduct . bots . 3d . optimizer',
+  'echo $STATUS          # open to work',
+  'node --version        # v22 . always learning',
+];
+let idx = 0, ci = 0, del = false;
+const tel = document.getElementById('typing');
+function tp() {
+  const cur = phrases[idx];
+  if (!del) {
+    tel.textContent = cur.substring(0, ci + 1);
+    ci++;
+    if (ci === cur.length) { del = true; setTimeout(tp, 2000); return; }
+  } else {
+    tel.textContent = cur.substring(0, ci - 1);
+    ci--;
+    if (ci === 0) { del = false; idx = (idx + 1) % phrases.length; }
+  }
+  setTimeout(tp, del ? 25 : 50);
+}
+tp();
+
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.fi').forEach(f => f.classList.add('go'));
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+const sb = document.getElementById('skillBars');
+if (sb) obs.observe(sb);
+
+
+const secObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      secObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('section .wrap').forEach(w => secObs.observe(w));
+
+
+document.querySelectorAll('.pr-card').forEach(c => {
+  c.addEventListener('mousemove', e => {
+    const r = c.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 100;
+    const y = ((e.clientY - r.top) / r.height) * 100;
+    c.style.setProperty('--mx', x + '%');
+    c.style.setProperty('--my', y + '%');
+  });
+});
+
+
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
+document.querySelectorAll('.sh-card img').forEach(img => {
+  img.addEventListener('click', () => {
+    lbImg.src = img.src;
+    lb.classList.add('open');
+  });
+});
+lb.addEventListener('click', () => lb.classList.remove('open'));
+lb.querySelector('.close').addEventListener('click', e => { e.stopPropagation(); lb.classList.remove('open'); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') lb.classList.remove('open'); });
+
+
+const copyBtn = document.getElementById('copyDiscord');
+if (copyBtn) {
+  copyBtn.addEventListener('click', async () => {
+    const label = document.getElementById('copyLabel');
+    try {
+      await navigator.clipboard.writeText(copyBtn.dataset.id);
+      label.textContent = 'copiado ✓';
+      copyBtn.classList.add('copied');
+      setTimeout(() => { label.textContent = 'copiar id'; copyBtn.classList.remove('copied'); }, 1800);
+    } catch {
+      label.textContent = 'error';
+      setTimeout(() => { label.textContent = 'copiar id'; }, 1800);
+    }
+  });
+}
+</script>
+
+</body>
+</html>
