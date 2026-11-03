@@ -220,6 +220,8 @@
 
   if (loader) {
     const duration = reduceMotion ? 250 : 1150;
+    // Red de seguridad: aunque rAF se pause (pestaña en segundo plano), el loader no se queda atascado.
+    window.setTimeout(finishLoad, duration + 1500);
     const start = performance.now();
     const tick = (now) => {
       const p = clamp((now - start) / duration, 0, 1);
