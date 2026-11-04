@@ -80,6 +80,7 @@
       ],
       stack: ['HTML', 'CSS', 'JavaScript', 'FiveM NUI', 'Lua', 'MySQL'],
       cover: 'proyecto_web_rp',
+      site: 'https://spainroleplay.site',
       images: images([
         ['proyecto_web_rp', 'Landing · Spain RP'],
         ['proyecto_web_rp2', 'Código penal consultable'],
@@ -103,6 +104,7 @@
       ],
       stack: ['HTML', 'CSS', 'JavaScript', 'FiveM', 'Dashboard', 'API'],
       cover: 'proyecto_web_rp4',
+      site: 'https://frentehispano.xyz',
       images: images([
         ['proyecto_web_rp4', 'Home · estado en vivo'],
         ['proyecto_web_rp5', 'Comunidad y métricas'],
@@ -119,11 +121,12 @@
       role: 'UI design & NUI',
       context: 'Tablet de solicitudes de robo',
       desc: [
-        'Tablet dentro de Phantom RP para pedir atracos. El jugador elige ubicación, vehículo y acompañantes; el staff revisa la solicitud y la acepta o rechaza con un motivo.',
+        'Tablet dentro de Phantom RP para pedir atracos, todavía <b>en desarrollo</b>. La preview ya muestra cómo el jugador elige ubicación, vehículo y acompañantes; el staff revisará la solicitud y la aceptará o rechazará con un motivo.',
         'Estados, historial, perfil y estadísticas en una <b>glass UI oscura</b> que se integra en la partida sin romper la inmersión. Feedback inmediato para que nadie se quede mirando una pantalla vacía.'
       ],
       stack: ['Lua', 'FiveM', 'NUI', 'HTML/CSS', 'UX'],
       cover: 'script_robos_fivem2',
+      status: 'en desarrollo · preview',
       images: images([
         ['script_robos_fivem2', 'Mis solicitudes'],
         ['script_robos_fivem', 'Nueva solicitud'],
@@ -901,11 +904,15 @@
       ['context', esc(project.context)],
       ['stack', project.stack.map((tech) => `<span class="tag">${esc(tech)}</span>`).join('')]
     ];
+    if (project.site) {
+      const label = project.site.replace('https://', '');
+      rows.push(['live', `<a href="${esc(project.site)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`]);
+    }
     if (project.link) {
       const label = project.link.replace('https://github.com/', 'github.com/');
       rows.push(['repo', `<a href="${esc(project.link)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`]);
     }
-    rows.push(['status', 'shipped · online']);
+    rows.push(['status', esc(project.status || 'shipped · online')]);
     return rows.map(([key, value]) => `<dt>${key}</dt><dd>${value}</dd>`).join('');
   };
 
