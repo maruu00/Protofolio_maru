@@ -38,6 +38,7 @@
       ],
       stack: ['HTML', 'CSS', 'JavaScript', 'E-commerce', 'Responsive'],
       cover: 'tienda_online_1',
+      link: 'https://github.com/marruuu-u990/nexumo-tienda',
       images: images([
         ['tienda_online_1', 'Home · oferta y catálogo'],
         ['tienda_online_2', 'Catálogo filtrable'],
@@ -144,7 +145,7 @@
       ],
       stack: ['discord.js', 'Node.js', 'MongoDB', 'Webhooks'],
       cover: 'bot_log_dni',
-      link: 'https://github.com/MaruMC123/Moderation_Bot',
+      link: 'https://github.com/maruu00/airpda-bot',
       images: images([
         ['bot_log_dni', 'Log · registro de DNI'],
         ['bot_log_seguridad', 'Log · alerta de seguridad'],
@@ -165,6 +166,7 @@
       ],
       stack: ['Lua', 'ESX', 'QBCore', 'NUI', 'MySQL'],
       cover: 'hud',
+      link: 'https://github.com/marruuu-u990/hud-script',
       images: images([
         ['hud', 'HUD personalizado'],
         ['jail_1', 'Sistema de cárcel (IC)'],
@@ -499,7 +501,7 @@
       }
       if (file === 'contact.sh') {
         printLine('discord  1037473407756935218');
-        printLine('github   github.com/MaruMC123');
+        printLine('github   github.com/marruuu-u990');
         printLine('response < 24 h');
         return;
       }
@@ -545,7 +547,7 @@
 
     contact() {
       printLine('discord   1037473407756935218', 'ok');
-      printLine('github    github.com/MaruMC123');
+      printLine('github    github.com/marruuu-u990');
       printLine('docs      portfolio de edición');
       printLine('response  < 24 h');
       printLine('o usa los enlaces de la sección contacto.');
@@ -897,9 +899,13 @@
       ['year', esc(project.year)],
       ['role', esc(project.role)],
       ['context', esc(project.context)],
-      ['stack', project.stack.map((tech) => `<span class="tag">${esc(tech)}</span>`).join('')],
-      ['status', 'shipped · online']
+      ['stack', project.stack.map((tech) => `<span class="tag">${esc(tech)}</span>`).join('')]
     ];
+    if (project.link) {
+      const label = project.link.replace('https://github.com/', 'github.com/');
+      rows.push(['repo', `<a href="${esc(project.link)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`]);
+    }
+    rows.push(['status', 'shipped · online']);
     return rows.map(([key, value]) => `<dt>${key}</dt><dd>${value}</dd>`).join('');
   };
 

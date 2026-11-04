@@ -791,6 +791,8 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
 }
 .frontmatter dt{color:var(--faint);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em}
 .frontmatter dd{color:var(--gray);overflow-wrap:anywhere}
+.frontmatter dd a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--faint)}
+.frontmatter dd a:hover{text-decoration-color:var(--ink)}
 .frontmatter dd .tag{
   display:inline-block;border:1px solid var(--line-2);color:var(--dim);
   padding:0 5px;margin:2px 4px 2px 0;font-size:9.5px;
