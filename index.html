@@ -3,632 +3,602 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Maru — Fullstack Developer &amp; Interface Designer</title>
-<meta name="description" content="Portafolio de Maru. Desarrollo web, interfaces para FiveM, bots de Discord y experimentos interactivos. Código que se siente vivo.">
-<meta name="theme-color" content="#08080a">
-<meta property="og:title" content="Maru — Código que se siente vivo">
-<meta property="og:description" content="Fullstack developer · FiveM · Web · Discord bots. Proyectos, experimentos y mini-juegos.">
+<title>maru@portfolio:~$ — Maru, fullstack developer</title>
+<meta name="description" content="Portafolio de Maru: desarrollo web, interfaces para FiveM, bots de Discord y experimentos interactivos. Una terminal, sin ruido.">
+<meta name="theme-color" content="#050505">
+<meta property="og:title" content="maru@portfolio:~$">
+<meta property="og:description" content="Fullstack developer · FiveM · Web · Discord bots. Proyectos, experimentos y minijuegos.">
 <meta property="og:type" content="website">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2308080a'/%3E%3Ctext x='50' y='72' font-family='Georgia,serif' font-style='italic' font-size='64' text-anchor='middle' fill='%23d8ff3e'%3Em%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050505'/%3E%3Crect x='.5' y='.5' width='63' height='63' fill='none' stroke='%23343434'/%3E%3Ctext x='10' y='42' font-family='monospace' font-size='24' fill='%23e9e9e9'%3E%26gt;_%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="img/web/tienda_online_1-thumb.webp">
 <link rel="preload" as="image" href="img/web/proyecto_tienda_peluqueria-thumb.webp">
-<link rel="stylesheet" href="assets/style.css">
-<noscript><style>.loader{display:none}.cursor{display:none}.rail{display:none}</style></noscript>
+<link rel="stylesheet" href="assets/style.css?v=3">
+<noscript><style>.type{clip-path:none!important}.preview{display:none}</style></noscript>
 </head>
 <body>
 
-<a class="skip" href="#main">Saltar al contenido</a>
+<a class="skip" href="#main">saltar al contenido</a>
 
-<div class="loader" id="loader" aria-hidden="true">
-  <div class="loader__top">
-    <div class="loader__brand">MARU<span>®</span></div>
-    <div class="loader__hint">Portafolio · 2026</div>
+<div class="bg" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+
+<!-- ================= topbar ================= -->
+<header class="topbar">
+  <div class="topbar__left">
+    <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <a class="brand" href="#hero" data-scroll="hero"><b>maru</b>@portfolio<span>:~</span></a>
   </div>
-  <div class="loader__count"><span id="loadCount">000</span><sup>%</sup></div>
-  <div class="loader__bottom">
-    <div class="loader__bar"><i id="loadBar"></i></div>
-    <div class="loader__hint">Cargando experiencia</div>
-  </div>
-</div>
 
-<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
-
-<div class="cursor" id="cursor" aria-hidden="true">
-  <div class="cursor__ring"><span class="cursor__label" id="cursorLabel"></span></div>
-  <div class="cursor__dot"></div>
-</div>
-
-<header class="nav" id="nav">
-  <a class="brand" href="#hero" data-scroll="hero" aria-label="Maru, inicio">MARU<span>®</span><i></i></a>
-
-  <nav class="nav__links" aria-label="Navegación principal">
-    <a href="#about" data-scroll="about">Sobre mí</a>
-    <a href="#work" data-scroll="work">Trabajo</a>
-    <a href="#play" data-scroll="play">Juegos</a>
-    <a href="#path" data-scroll="path">Trayectoria</a>
-    <a href="#contact" data-scroll="contact">Contacto</a>
+  <nav class="nav" aria-label="Secciones">
+    <a href="#about" data-scroll="about">about</a>
+    <a href="#work" data-scroll="work">work</a>
+    <a href="#play" data-scroll="play">play</a>
+    <a href="#path" data-scroll="path">path</a>
+    <a href="#services" data-scroll="services">services</a>
+    <a href="#contact" data-scroll="contact">contact</a>
   </nav>
 
-  <div class="nav__right">
-    <div class="nav__status"><span class="dot"></span> Disponible</div>
-    <div class="nav__clock" id="navClock">--:--</div>
-    <button class="burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">
-      <span></span><span></span><span></span>
-    </button>
+  <div class="topbar__right">
+    <span class="clock" id="clock">--:--</span>
+    <span class="topbar__sep">|</span>
+    <span class="enc">UTF-8</span>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">[ menu ]</button>
   </div>
 </header>
 
+<!-- ================= menú móvil ================= -->
 <div class="menu" id="menu" aria-hidden="true">
-  <nav class="menu__links" aria-label="Menú móvil">
-    <a href="#about" data-scroll="about"><small>01</small> Sobre mí</a>
-    <a href="#work" data-scroll="work"><small>02</small> Trabajo</a>
-    <a href="#play" data-scroll="play"><small>03</small> Juegos</a>
-    <a href="#path" data-scroll="path"><small>04</small> Trayectoria</a>
-    <a href="#contact" data-scroll="contact"><small>05</small> <em>Hablemos</em></a>
-  </nav>
-  <div class="menu__foot">
-    <span>Madrid · ES</span>
-    <span>maru © 2026</span>
+  <div class="win menu__win">
+    <div class="win__bar">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="win__title">menu — ~/portfolio</span>
+      <button class="win__btn" id="menuClose" type="button" aria-label="Cerrar menú [x]">[x]</button>
+    </div>
+    <div class="menu__body">
+      <p class="menu__cmd">$ cd</p>
+      <nav aria-label="Menú móvil">
+        <a href="#about" data-scroll="about"><small>01</small> ~/about</a>
+        <a href="#work" data-scroll="work"><small>02</small> ~/work</a>
+        <a href="#play" data-scroll="play"><small>03</small> ~/play</a>
+        <a href="#path" data-scroll="path"><small>04</small> ~/path</a>
+        <a href="#services" data-scroll="services"><small>05</small> ~/services</a>
+        <a href="#contact" data-scroll="contact"><small>06</small> ~/contact</a>
+      </nav>
+      <p class="menu__hint">[esc] cerrar</p>
+    </div>
   </div>
 </div>
 
-<aside class="rail" id="rail" aria-label="Secciones">
-  <a href="#about" data-rail="about"><span>Sobre mí</span><i></i></a>
-  <a href="#work" data-rail="work"><span>Trabajo</span><i></i></a>
-  <a href="#play" data-rail="play"><span>Juegos</span><i></i></a>
-  <a href="#path" data-rail="path"><span>Trayectoria</span><i></i></a>
-  <a href="#contact" data-rail="contact"><span>Contacto</span><i></i></a>
-</aside>
-
 <main id="main">
 
-  <!-- ================= HERO ================= -->
+  <h1 class="sr-only">Maru — fullstack developer</h1>
+
+  <!-- ================= hero ================= -->
   <section class="hero" id="hero">
-    <canvas id="flow" aria-hidden="true"></canvas>
-
-    <div class="shell hero__inner">
-      <div class="hero__content">
-        <div class="hero__eyebrow mono" data-reveal>
-          <span class="dot"></span>
-          <b>Portafolio 2026</b>
-          <span class="sep">/</span>
-          <span>Disponible para proyectos</span>
-        </div>
-
-        <h1 class="hero__title">
-          <span class="line-mask"><span>Código que</span></span>
-          <span class="line-mask"><span>se siente</span></span>
-          <span class="line-mask"><span><em>vivo</em>.</span></span>
-        </h1>
-
-        <p class="hero__sub" data-reveal style="--d:380ms">
-          Desarrollador <b>fullstack</b>. Diseño interfaces para FiveM, web y bots de Discord.
-          Me obsesionan los detalles que nadie ve pero todo el mundo siente.
-        </p>
-
-        <div class="hero__actions" data-reveal style="--d:480ms">
-          <a class="btn btn--solid magnetic" href="#work" data-scroll="work">
-            Ver proyectos
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-          </a>
-          <a class="btn btn--ghost magnetic" href="#play" data-scroll="play">
-            Jugar algo
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-        </div>
+    <div class="win hero__win">
+      <div class="win__bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="win__title">maru@portfolio: ~/portfolio</span>
+        <span class="win__meta">zsh · 120×40</span>
       </div>
 
-      <div class="deck" id="deck" aria-label="Proyectos destacados">
-        <button class="deck__card" type="button" data-project="nexumo" data-cursor="Ver" aria-label="Abrir proyecto Nexumo">
-          <img src="img/web/tienda_online_1-thumb.webp" alt="Tienda online Nexumo" width="640" height="322" decoding="async">
-          <span class="deck__tag">01 / Web</span>
-          <span class="deck__name"><b>Nexumo</b><span>2026</span></span>
-        </button>
-        <button class="deck__card" type="button" data-project="maloa" data-cursor="Ver" aria-label="Abrir proyecto Maloa Moscato">
-          <img src="img/web/proyecto_tienda_peluqueria-thumb.webp" alt="Web de la peluquería Maloa Moscato" width="640" height="322" loading="lazy" decoding="async">
-          <span class="deck__tag">02 / Brand</span>
-          <span class="deck__name"><b>Maloa Moscato</b><span>2026</span></span>
-        </button>
-        <button class="deck__card" type="button" data-project="frente" data-cursor="Ver" aria-label="Abrir proyecto Frente Hispano">
-          <img src="img/web/proyecto_web_rp4-thumb.webp" alt="Web del servidor Frente Hispano" width="640" height="320" loading="lazy" decoding="async">
-          <span class="deck__tag">03 / FiveM</span>
-          <span class="deck__name"><b>Frente Hispano</b><span>2026</span></span>
-        </button>
-        <span class="deck__hint">Click para explorar</span>
+      <div class="hero__body">
+        <p class="line">Last login: <span id="lastLogin">Tue Nov 03 17:19:00 2026</span> on ttys001</p>
+
+        <p class="cmdline">
+          <span class="prompt"><b>maru</b>@portfolio:~$</span>
+          <span class="args">whoami</span>
+          <span class="cursor" aria-hidden="true"></span>
+        </p>
+
+        <pre class="ascii" aria-label="Maru">███╗   ███╗ █████╗ ██████╗ ██╗   ██╗
+████╗ ████║██╔══██╗██╔══██╗██║   ██║
+██╔████╔██║███████║██████╔╝██║   ██║
+██║╚██╔╝██║██╔══██║██╔══██╗██║   ██║
+██║ ╚═╝ ██║██║  ██║██║  ██║╚██████╔╝
+╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ </pre>
+
+        <p class="hero__role">fullstack developer <span class="dim">·</span> Madrid, ES</p>
+
+        <p class="hero__bio">
+          Construyo interfaces y sistemas que se sienten vivos.
+          <span class="dim">FiveM, web, bots de Discord y experimentos interactivos.</span>
+        </p>
+
+        <div class="hero__links">
+          <a href="#work" data-scroll="work">work/</a>
+          <a href="#play" data-scroll="play">play/</a>
+          <a href="#contact" data-scroll="contact">contact/</a>
+          <a href="https://github.com/MaruMC123" target="_blank" rel="noopener">github ↗</a>
+        </div>
+
+        <div class="shell">
+          <div class="shell__line" id="shellLine">
+            <span class="prompt"><b>maru</b>@portfolio:~$</span>
+            <span class="shell__field">
+              <span class="shell__text" id="shellText" aria-hidden="true"></span><span class="shell__caret" aria-hidden="true"></span>
+              <input class="shell__input" id="shellInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Escribe un comando y pulsa Enter">
+            </span>
+          </div>
+
+          <div class="shell__out" id="shellOut" role="log" aria-live="polite">
+            <div class="err">Escribe <span class="key">help</span> para ver los comandos. <span class="key">Tab</span> autocompleta.</div>
+          </div>
+
+          <div class="shell__quick">
+            <button type="button" data-cmd="help">help</button>
+            <button type="button" data-cmd="ls">ls</button>
+            <button type="button" data-cmd="neofetch">neofetch</button>
+            <button type="button" data-cmd="contact">contact</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="shell hero__bottom">
-      <div class="hero__scroll"><i></i> Scroll para explorar</div>
-      <div class="hero__meta">
-        <span class="mono">Madrid · <span id="heroClock">--:--</span></span>
-        <span class="mono">4 años construyendo</span>
-      </div>
-      <div class="hero__socials">
-        <a href="https://github.com/MaruMC123" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://discord.com/users/1037473407756935218" target="_blank" rel="noopener">Discord</a>
-      </div>
+    <div class="hero__status">
+      <span><span class="dot" aria-hidden="true"></span> available for work</span>
+      <span>scroll ↓</span>
     </div>
   </section>
 
-  <!-- ================= MARQUEE ================= -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__track">
-      <div class="marquee__group">
-        <span>FiveM</span><span>Web apps</span><span>Discord bots</span><span>UI / UX</span>
-        <span>NUI</span><span>Minecraft</span><span>Automatización</span><span>Three.js</span>
-      </div>
-      <div class="marquee__group">
-        <span>FiveM</span><span>Web apps</span><span>Discord bots</span><span>UI / UX</span>
-        <span>NUI</span><span>Minecraft</span><span>Automatización</span><span>Three.js</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= ABOUT ================= -->
-  <section class="section" id="about">
-    <div class="shell">
+  <!-- ================= about ================= -->
+  <section class="section about" id="about">
+    <div class="shell-wrap">
       <div class="sec-head" data-reveal>
-        <span class="n">01</span>
-        <span class="label">Sobre mí</span>
-        <span class="rule"></span>
-        <span class="aside">Curiosidad + criterio</span>
+        <span class="num">[01]</span>
+        <span class="prompt"><b>maru</b>@portfolio:~$</span>
+        <span class="type">cat about.md</span>
       </div>
 
-      <h2 class="about__lead" data-reveal>
-        Diseño y construyo experiencias que no se sienten como <em>plantillas</em>.
-      </h2>
+      <h2 class="h2" data-reveal>Diseño y construyo experiencias que no se sienten como <span class="hl">plantillas</span>.</h2>
 
       <div class="about__grid">
-        <div class="about__copy">
+        <div class="prose">
           <p data-reveal>
             Empecé trasteando servidores de <b>FiveM</b> y acabé cómodo en cualquier sitio donde haya
             una interfaz que mejorar: una tienda, un panel de staff, una tablet dentro del juego o un bot
             que hace el trabajo aburrido por ti.
           </p>
-          <p data-reveal style="--d:80ms">
+          <p data-reveal style="--d:70ms">
             Trabajo con <b>HTML, CSS, JavaScript y Lua</b>, y toco Node.js cuando el proyecto pide backend.
             Me gusta la parte que casi nadie menciona: que cargue rápido, que se entienda sin explicación
-            y que dé gusto usarlo. <em>El detalle es el diseño.</em>
+            y que dé gusto usarlo. <b>El detalle es el diseño.</b>
           </p>
-          <p data-reveal style="--d:160ms">
+          <p data-reveal style="--d:140ms">
             Ahora mismo estoy explorando interfaces generativas, microjuegos y herramientas con IA.
             Todo lo que ves aquí lo he construido, roto y vuelto a construir.
           </p>
-
-          <div class="about__sign" id="signature" data-reveal style="--d:200ms">
-            <svg viewBox="0 0 300 90" role="img" aria-label="Firma de Maru">
-              <path pathLength="1" d="M8 66 C 26 18, 48 16, 46 48 C 44 74, 24 78, 32 54 C 40 30, 66 18, 70 50 C 74 78, 54 82, 60 56 C 66 30, 90 20, 96 52 C 101 80, 82 82, 92 60 C 102 38, 122 36, 128 58 C 132 72, 122 78, 136 70 C 152 60, 156 40, 168 44 C 180 48, 164 76, 182 68 C 200 60, 208 42, 220 46 C 232 50, 220 74, 238 66 C 254 59, 266 46, 292 50"/>
-            </svg>
-            <span>Maru · 2026</span>
-          </div>
+          <p class="about__sign" data-reveal style="--d:200ms">— maru, 2026</p>
         </div>
 
-        <div class="about__side">
+        <aside>
           <div class="stats" data-reveal>
-            <div class="stat"><b data-count="4">0</b><span>Años codeando</span></div>
-            <div class="stat"><b data-count="30" data-suffix="+">0</b><span>Scripts y proyectos</span></div>
-            <div class="stat"><b data-count="12">0</b><span>Servidores tocados</span></div>
-            <div class="stat"><b data-count="8">0</b><span>Proyectos en portada</span></div>
+            <div class="stat"><b data-count="4">0</b><span>años codeando</span></div>
+            <div class="stat"><b data-count="30" data-suffix="+">0</b><span>scripts y proyectos</span></div>
+            <div class="stat"><b data-count="12">0</b><span>servidores tocados</span></div>
+            <div class="stat"><b data-count="8">0</b><span>proyectos en portada</span></div>
           </div>
 
-          <div class="tools" data-reveal style="--d:120ms">
-            <h4>Herramientas de todos los días</h4>
-            <ul>
-              <li>HTML / CSS</li><li>JavaScript</li><li>Lua</li><li>Node.js</li>
-              <li>discord.js</li><li>React</li><li>Three.js</li><li>MySQL</li>
-              <li>MongoDB</li><li>Git</li><li>Figma</li><li>FiveM</li><li>Paper</li>
-            </ul>
+          <div class="tools" data-reveal style="--d:100ms">
+            <h3>~/stack</h3>
+            <div class="chips">
+              <span>html</span><span>css</span><span>javascript</span><span>lua</span>
+              <span>node.js</span><span>discord.js</span><span>react</span><span>mysql</span>
+              <span>mongodb</span><span>git</span><span>figma</span><span>fivem</span><span>paper</span>
+            </div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   </section>
 
-  <!-- ================= WORK ================= -->
+  <!-- ================= work ================= -->
   <section class="section" id="work">
-    <div class="shell">
+    <div class="shell-wrap">
       <div class="sec-head" data-reveal>
-        <span class="n">02</span>
-        <span class="label">Trabajo seleccionado</span>
-        <span class="rule"></span>
-        <span class="aside">2024 — 2026</span>
+        <span class="num">[02]</span>
+        <span class="prompt"><b>maru</b>@portfolio:~$</span>
+        <span class="type">ls -la ~/projects</span>
       </div>
 
-      <div class="work__head" data-reveal>
-        <h2 class="work__title">Cosas que he <em>construido</em>.</h2>
-        <span class="work__count" id="workCount">08 proyectos</span>
+      <div class="work__top">
+        <h2 class="h2" data-reveal>Cosas que he <span class="hl">construido</span>.</h2>
+        <span class="total" id="workCount">total 8</span>
       </div>
 
       <div class="filters" data-reveal role="group" aria-label="Filtrar proyectos">
-        <button type="button" class="active" data-filter="all">Todo</button>
-        <button type="button" data-filter="web">Web</button>
-        <button type="button" data-filter="fivem">FiveM</button>
-        <button type="button" data-filter="bots">Bots</button>
-        <button type="button" data-filter="minecraft">Minecraft</button>
+        <button type="button" class="active" data-filter="all">--all</button>
+        <button type="button" data-filter="web">--web</button>
+        <button type="button" data-filter="fivem">--fivem</button>
+        <button type="button" data-filter="bots">--bots</button>
+        <button type="button" data-filter="minecraft">--minecraft</button>
       </div>
 
-      <div class="work-list" id="workList">
-        <button class="work-row" type="button" data-project="nexumo" data-cat="web" data-cursor="Ver">
-          <span class="work-row__n">01</span>
-          <span class="work-row__title" data-scramble>Nexumo</span>
-          <span class="work-row__cat">E-commerce</span>
+      <div class="work-list" id="workList" data-reveal>
+        <button class="work-row" type="button" data-project="nexumo" data-cat="web" data-cursor="open">
+          <span class="work-row__perm">drwxr-xr-x</span>
           <span class="work-row__year">2026</span>
-          <span class="work-row__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          <img class="work-row__thumb" src="img/web/tienda_online_1-thumb.webp" alt="" loading="lazy" width="640" height="322">
+          <span class="work-row__name">nexumo/</span>
+          <span class="work-row__cat">e-commerce</span>
+          <span class="work-row__arrow" aria-hidden="true">→</span>
         </button>
 
-        <button class="work-row" type="button" data-project="maloa" data-cat="web" data-cursor="Ver">
-          <span class="work-row__n">02</span>
-          <span class="work-row__title" data-scramble>Maloa Moscato</span>
-          <span class="work-row__cat">Brand / Web</span>
+        <button class="work-row" type="button" data-project="maloa" data-cat="web" data-cursor="open">
+          <span class="work-row__perm">drwxr-xr-x</span>
           <span class="work-row__year">2026</span>
-          <span class="work-row__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          <img class="work-row__thumb" src="img/web/proyecto_tienda_peluqueria-thumb.webp" alt="" loading="lazy" width="640" height="322">
+          <span class="work-row__name">maloa-moscato/</span>
+          <span class="work-row__cat">brand / web</span>
+          <span class="work-row__arrow" aria-hidden="true">→</span>
         </button>
 
-        <button class="work-row" type="button" data-project="spainrp" data-cat="web" data-cursor="Ver">
-          <span class="work-row__n">03</span>
-          <span class="work-row__title" data-scramble>Spain RP</span>
-          <span class="work-row__cat">Plataforma web</span>
+        <button class="work-row" type="button" data-project="spainrp" data-cat="web" data-cursor="open">
+          <span class="work-row__perm">drwxr-xr-x</span>
           <span class="work-row__year">2026</span>
-          <span class="work-row__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          <img class="work-row__thumb" src="img/web/proyecto_web_rp-thumb.webp" alt="" loading="lazy" width="640" height="320">
+          <span class="work-row__name">spain-rp/</span>
+          <span class="work-row__cat">plataforma web</span>
+          <span class="work-row__arrow" aria-hidden="true">→</span>
         </button>
 
-        <button class="work-row" type="button" data-project="frente" data-cat="fivem" data-cursor="Ver">
-          <span class="work-row__n">04</span>
-          <span class="work-row__title" data-scramble>Frente Hispano</span>
-          <span class="work-row__cat">FiveM / Web</span>
+        <button class="work-row" type="button" data-project="frente" data-cat="fivem" data-cursor="open">
+          <span class="work-row__perm">drwxr-xr-x</span>
           <span class="work-row__year">2026</span>
-          <span class="work-row__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          <img class="work-row__thumb" src="img/web/proyecto_web_rp4-thumb.webp" alt="" loading="lazy" width="640" height="320">
+          <span class="work-row__name">frente-hispano/</span>
+          <span class="work-row__cat">fivem / web</span>
+          <span class="work-row__arrow" aria-hidden="true">→</span>
         </button>
 
-        <button class="work-row" type="button" data-project="phantom" data-cat="fivem" data-cursor="Ver">
-          <span class="work-row__n">05</span>
-          <span class="work-row__title" data-scramble>Phantom RP</span>
-          <span class="work-row__cat">FiveM NUI</span>
+        <button class="work-row" type="button" data-project="phantom" data-cat="fivem" data-cursor="open">
+          <span class="work-row__perm">drwxr-xr-x</span>
           <span class="work-row__year">2026</span>
-          <span class="work-row__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          <img class="work-row__thumb" src="img/web/script_robos_fivem2-thumb.webp" alt="" loading="lazy" width="640" height="382">
+          <span class="work-row__name">phantom-rp/</span>
+          <span class="work-row__cat">fivem nui</span>
+          <span class="work-row__arrow" aria-hidden="true">→</span>
         </button>
 
-        <button class="work-row" type="button" data-project="bot" data-cat="bots" data-cursor="Ver">
-          <span class="work-row__n">06</span>
-          <span class="work-row__title" data-scramble>Ops Bot</span>
-          <span class="work-row__cat">Discord / Bots</span>
+        <button class="work-row" type="button" data-project="bot" data-cat="bots" data-cursor="open">
+          <span class="work-row__perm">drwxr-xr-x</span>
           <span class="work-row__year">2026</span>
-          <span class="work-row__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          <img class="work-row__thumb" src="img/web/bot_log_dni-thumb.webp" alt="" loading="lazy" width="533" height="268">
+          <span class="work-row__name">ops-bot/</span>
+          <span class="work-row__cat">discord bot</span>
+          <span class="work-row__arrow" aria-hidden="true">→</span>
         </button>
 
-        <button class="work-row" type="button" data-project="fivemkit" data-cat="fivem" data-cursor="Ver">
-          <span class="work-row__n">07</span>
-          <span class="work-row__title" data-scramble>FiveM Essentials</span>
-          <span class="work-row__cat">Scripts / UI</span>
+        <button class="work-row" type="button" data-project="fivemkit" data-cat="fivem" data-cursor="open">
+          <span class="work-row__perm">drwxr-xr-x</span>
           <span class="work-row__year">2025</span>
-          <span class="work-row__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          <img class="work-row__thumb" src="img/web/hud-thumb.webp" alt="" loading="lazy" width="640" height="360">
+          <span class="work-row__name">fivem-essentials/</span>
+          <span class="work-row__cat">scripts / ui</span>
+          <span class="work-row__arrow" aria-hidden="true">→</span>
         </button>
 
-        <button class="work-row" type="button" data-project="astri" data-cat="minecraft" data-cursor="Ver">
-          <span class="work-row__n">08</span>
-          <span class="work-row__title" data-scramble>Astri Hub</span>
-          <span class="work-row__cat">Minecraft</span>
+        <button class="work-row" type="button" data-project="astri" data-cat="minecraft" data-cursor="open">
+          <span class="work-row__perm">drwxr-xr-x</span>
           <span class="work-row__year">2025</span>
-          <span class="work-row__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          <img class="work-row__thumb" src="img/web/astrihub-thumb.webp" alt="" loading="lazy" width="247" height="191">
+          <span class="work-row__name">astri-hub/</span>
+          <span class="work-row__cat">minecraft</span>
+          <span class="work-row__arrow" aria-hidden="true">→</span>
         </button>
       </div>
+
+      <p class="work__hint">click para abrir <span class="key">README.md</span> · hover para previsualizar</p>
     </div>
   </section>
 
-  <!-- ================= PLAYGROUND ================= -->
-  <section class="play" id="play">
-    <div class="shell">
+  <!-- ================= playground ================= -->
+  <section class="section" id="play">
+    <div class="shell-wrap">
       <div class="sec-head" data-reveal>
-        <span class="n">03</span>
-        <span class="label">Playground</span>
-        <span class="rule"></span>
-        <span class="aside">Interactivo · sin instalar nada</span>
+        <span class="num">[03]</span>
+        <span class="prompt"><b>maru</b>@portfolio:~$</span>
+        <span class="type">./playground --list</span>
       </div>
 
-      <div class="play__head" data-reveal>
-        <div>
-          <h2 class="play__title">Juega un <em>poco</em>.</h2>
-        </div>
-        <p class="play__desc">
-          Dos pequeños experimentos hechos a mano. Sin tutoriales eternos:
-          <b>snake</b> clásico y un juego de <b>memoria</b>. Tus récords se guardan en este navegador.
+      <div class="play__head">
+        <h2 class="h2" data-reveal>Dos <span class="hl">minijuegos</span>.</h2>
+        <p class="prose" data-reveal>
+          Experimentos hechos a mano. Sin tutoriales eternos: <b>snake</b> clásico y un juego de
+          <b>memoria</b>. Los récords se guardan en este navegador.
         </p>
-        <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
-          <span id="soundLabel">Sonido on</span>
-        </button>
       </div>
 
       <div class="play__grid">
-        <!-- SNAKE -->
-        <article class="game" id="snakeGame">
-          <div class="game__bar">
-            <div class="game__name"><i></i> snake.exe</div>
-            <div class="game__scores">
-              <span>Score <b id="snakeScore">0</b></span>
-              <span class="high">High <b id="snakeHigh">0</b></span>
-            </div>
+        <!-- snake -->
+        <article class="win game" id="snakeGame">
+          <div class="win__bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="win__title">snake.sh</span>
+            <span class="win__meta">80×25</span>
           </div>
+
+          <div class="game__meta">
+            <span>score<b id="snakeScore">0</b></span>
+            <span>high<b id="snakeHigh">0</b></span>
+            <span>state<b id="snakeState">ready</b></span>
+          </div>
+
           <div class="game__stage">
             <canvas id="snakeCanvas" width="480" height="300" aria-label="Juego snake" role="img"></canvas>
             <div class="game__overlay" id="snakeOverlay">
-              <h4><em>Minijuego 01</em> Sube el récord</h4>
-              <p>Flechas o WASD para moverte. Come los puntos, no te muerdas la cola.</p>
-              <button class="btn btn--solid" id="snakeStart" type="button">Jugar ahora</button>
+              <p class="game__pre">$ ./snake.sh</p>
+              <h3 class="game__title" id="snakeTitle">snake</h3>
+              <p class="game__text" id="snakeText">Come los puntos. No te muerdas la cola.</p>
+              <button class="btn" id="snakeStart" type="button">[ start ]</button>
+              <p class="game__hint">flechas / wasd · space pausa</p>
             </div>
           </div>
+
           <div class="game__foot">
-            <div class="keys"><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><span style="margin-left:6px">mover</span></div>
-            <div class="dpad" id="snakePad">
-              <button class="up" type="button" data-dir="up" aria-label="Arriba">↑</button>
-              <button class="left" type="button" data-dir="left" aria-label="Izquierda">←</button>
-              <button class="down" type="button" data-dir="down" aria-label="Abajo">↓</button>
-              <button class="right" type="button" data-dir="right" aria-label="Derecha">→</button>
+            <div class="keys">
+              <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd>
+              <span style="margin-left:4px">mover</span>
             </div>
-            <span>Space · pausa</span>
+            <div class="dpad" id="snakePad">
+              <button class="up" type="button" data-dir="up" aria-label="Arriba ↑">↑</button>
+              <button class="left" type="button" data-dir="left" aria-label="Izquierda ←">←</button>
+              <button class="down" type="button" data-dir="down" aria-label="Abajo ↓">↓</button>
+              <button class="right" type="button" data-dir="right" aria-label="Derecha →">→</button>
+            </div>
+            <span>space · pausa</span>
           </div>
         </article>
 
-        <!-- MEMORY -->
-        <article class="game" id="memoryGame">
-          <div class="game__bar">
-            <div class="game__name"><i></i> secuencia.exe</div>
-            <div class="game__scores">
-              <span>Nivel <b id="memoryScore">0</b></span>
-              <span class="high">High <b id="memoryHigh">0</b></span>
-            </div>
+        <!-- memory -->
+        <article class="win game" id="memoryGame">
+          <div class="win__bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="win__title">memory.sh</span>
+            <span class="win__meta">3×3</span>
           </div>
+
+          <div class="game__meta">
+            <span>level<b id="memoryScore">0</b></span>
+            <span>high<b id="memoryHigh">0</b></span>
+            <span>phase<b id="memoryPhase">ready</b></span>
+          </div>
+
           <div class="game__stage">
             <div class="memory__wrap">
               <div class="memory__grid" id="memoryGrid" aria-label="Tablero de memoria"></div>
-              <div class="memory__status"><span id="memoryStatus">Pulsa empezar</span><span>Observa · repite</span></div>
+              <div class="memory__status">
+                <span id="memoryStatus">pulsa start</span>
+                <span>observa · repite</span>
+              </div>
             </div>
+
             <div class="game__overlay" id="memoryOverlay">
-              <h4><em>Minijuego 02</em> Memoria fotográfica</h4>
-              <p>Mira la secuencia y repítela. Cada nivel añade un paso más.</p>
-              <button class="btn btn--solid" id="memoryStart" type="button">Empezar</button>
+              <p class="game__pre">$ ./memory.sh</p>
+              <h3 class="game__title" id="memoryTitle">secuencia</h3>
+              <p class="game__text" id="memoryText">Mira la secuencia y repítela. Cada nivel añade un paso.</p>
+              <button class="btn" id="memoryStart" type="button">[ start ]</button>
+              <p class="game__hint">click en las casillas</p>
             </div>
           </div>
+
           <div class="game__foot">
-            <span>Click en las casillas</span>
-            <span id="memoryPhase">Listo</span>
+            <span>click en las casillas</span>
+            <span id="memoryFoot">memoria fotográfica</span>
           </div>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ================= TIMELINE ================= -->
+  <!-- ================= trayectoria ================= -->
   <section class="section" id="path">
-    <div class="shell">
+    <div class="shell-wrap">
       <div class="sec-head" data-reveal>
-        <span class="n">04</span>
-        <span class="label">Trayectoria</span>
-        <span class="rule"></span>
-        <span class="aside">Donde he aprendido</span>
+        <span class="num">[04]</span>
+        <span class="prompt"><b>maru</b>@portfolio:~$</span>
+        <span class="type">git log --oneline --graph</span>
       </div>
 
-      <div class="path__head" data-reveal>
-        <h2 class="path__title">El camino, <em>sin atajos</em>.</h2>
-        <p class="path__desc">
+      <div class="path__head">
+        <h2 class="h2" data-reveal>El camino, <span class="hl">sin atajos</span>.</h2>
+        <p class="prose" data-reveal>
           Servidores reales, gente real y bugs a las tres de la mañana.
           Esto es lo que ha ido formando el criterio.
         </p>
       </div>
 
-      <div class="timeline" id="timeline">
-        <svg class="timeline__svg" viewBox="0 0 2 100" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#d8ff3e"/>
-              <stop offset=".7" stop-color="#d8ff3e"/>
-              <stop offset="1" stop-color="#f2f0ea"/>
-            </linearGradient>
-          </defs>
-          <path id="timelinePath" d="M1 0 L1 100" pathLength="1"/>
-        </svg>
-
-        <article class="timeline__item">
-          <div class="timeline__year">2025 — hoy</div>
-          <div class="timeline__body">
-            <h4>Union RP <span>·</span> soporte técnico</h4>
+      <div class="log">
+        <article class="commit" data-reveal>
+          <span class="commit__hash">a1f9c2e</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__branch">HEAD -&gt; main</span><span class="commit__date">2025 — hoy</span></div>
+            <h3>Union RP <span>·</span> soporte técnico</h3>
             <p>Mantenimiento y optimización de sistemas existentes. Entrar a un servidor ya montado, encontrar la fuga de rendimiento y dejarlo mejor de lo que estaba.</p>
-            <span class="timeline__tag">Lua · Optimización</span>
+            <div class="commit__tags"><span>#lua</span><span>#optimización</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2024 — hoy</div>
-          <div class="timeline__body">
-            <h4>Orion Network <span>·</span> scripts &amp; infraestructura</h4>
+        <article class="commit" data-reveal style="--d:40ms">
+          <span class="commit__hash">4b7d0f1</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2024 — hoy</span></div>
+            <h3>Orion Network <span>·</span> scripts &amp; infraestructura</h3>
             <p>Desarrollo de scripts y configuración de servidores para una empresa de infraestructura FiveM. Soporte directo a otros servidores y mucho trabajo entre bastidores.</p>
-            <span class="timeline__tag">FiveM · DevOps</span>
+            <div class="commit__tags"><span>#fivem</span><span>#devops</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2025</div>
-          <div class="timeline__body">
-            <h4>Hostana Network <span>·</span> hosting</h4>
+        <article class="commit" data-reveal style="--d:60ms">
+          <span class="commit__hash">9c2a6e8</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2025</span></div>
+            <h3>Hostana Network <span>·</span> hosting</h3>
             <p>Colaboración con una empresa de hosting y redes: despliegue de scripts, ajustes de rendimiento y asesoramiento técnico a clientes.</p>
-            <span class="timeline__tag">Infra · Soporte</span>
+            <div class="commit__tags"><span>#infra</span><span>#soporte</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2025</div>
-          <div class="timeline__body">
-            <h4>Script Camionero <span>·</span> mi primer sistema</h4>
+        <article class="commit" data-reveal style="--d:80ms">
+          <span class="commit__hash">7e0b3d5</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2025</span></div>
+            <h3>Script Camionero <span>·</span> mi primer sistema</h3>
             <p>El proyecto con el que pasé de tocar scripts a diseñarlos de cero: rutas, contratos, entregas y personalización de camiones.</p>
-            <span class="timeline__tag">Lua · Diseño de sistemas</span>
+            <div class="commit__tags"><span>#lua</span><span>#diseño-de-sistemas</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2025</div>
-          <div class="timeline__body">
-            <h4>Astri Hub <span>·</span> founder</h4>
+        <article class="commit" data-reveal style="--d:100ms">
+          <span class="commit__hash">2f8a1c4</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2025</span></div>
+            <h3>Astri Hub <span>·</span> founder</h3>
             <p>Mi primera empresa de Minecraft. Servidor, economía, protecciones, minijuegos y una comunidad que había que cuidar tanto como el código.</p>
-            <span class="timeline__tag">Java · Paper</span>
+            <div class="commit__tags"><span>#java</span><span>#paper</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2024 — 2025</div>
-          <div class="timeline__body">
-            <h4>Furia Network RP <span>·</span> scripts</h4>
+        <article class="commit" data-reveal style="--d:120ms">
+          <span class="commit__hash">6d4e9b0</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2024 — 2025</span></div>
+            <h3>Furia Network RP <span>·</span> scripts</h3>
             <p>Meter scripts, arreglarlos, añadir PEDs y vehículos, y mantener vivos los sistemas del servidor sin romper la economía.</p>
-            <span class="timeline__tag">ESX · QBCore</span>
+            <div class="commit__tags"><span>#esx</span><span>#qbcore</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2024 — 2025</div>
-          <div class="timeline__body">
-            <h4>DF Network <span>·</span> auxiliar y creador</h4>
+        <article class="commit" data-reveal style="--d:140ms">
+          <span class="commit__hash">3a7c5f2</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2024 — 2025</span></div>
+            <h3>DF Network <span>·</span> auxiliar y creador</h3>
             <p>Desarrollo de sistemas internos, mantenimiento de servidores y scripts personalizados para el equipo.</p>
-            <span class="timeline__tag">Lua · Sistemas internos</span>
+            <div class="commit__tags"><span>#lua</span><span>#sistemas-internos</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2024 — 2025</div>
-          <div class="timeline__body">
-            <h4>Urban RP <span>·</span> depuración</h4>
+        <article class="commit" data-reveal style="--d:160ms">
+          <span class="commit__hash">8b1d6a3</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2024 — 2025</span></div>
+            <h3>Urban RP <span>·</span> depuración</h3>
             <p>Fix de errores y optimización. Menos features nuevas, más hacer que lo que ya existe funcione como debería.</p>
-            <span class="timeline__tag">Debug · Rendimiento</span>
+            <div class="commit__tags"><span>#debug</span><span>#rendimiento</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2024 — 2025</div>
-          <div class="timeline__body">
-            <h4>VPS &amp; Cloud <span>·</span> soporte</h4>
+        <article class="commit" data-reveal style="--d:180ms">
+          <span class="commit__hash">5e9f2c7</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2024 — 2025</span></div>
+            <h3>VPS &amp; Cloud <span>·</span> soporte</h3>
             <p>Gestión de servidores virtuales, configuración de redes y atención a clientes. La escuela de explicar cosas técnicas sin tecnicismos.</p>
-            <span class="timeline__tag">Redes · Cloud</span>
+            <div class="commit__tags"><span>#redes</span><span>#cloud</span></div>
           </div>
         </article>
 
-        <article class="timeline__item">
-          <div class="timeline__year">2024 — 2025</div>
-          <div class="timeline__body">
-            <h4>Quita Marcas <span>·</span> vehículos FiveM</h4>
+        <article class="commit" data-reveal style="--d:200ms">
+          <span class="commit__hash">0c6b4e1</span>
+          <div class="commit__body">
+            <div class="commit__meta"><span class="commit__date">2024 — 2025</span></div>
+            <h3>Quita Marcas <span>·</span> vehículos FiveM</h3>
             <p>Adaptación y texturizado de vehículos para eliminar marcas comerciales, optimizados para servidores de roleplay.</p>
-            <span class="timeline__tag">3D · Texturas</span>
+            <div class="commit__tags"><span>#3d</span><span>#texturas</span></div>
           </div>
         </article>
-
-        <span class="timeline__tip" id="timelineTip" aria-hidden="true"></span>
       </div>
     </div>
   </section>
 
-  <!-- ================= SERVICES ================= -->
-  <section class="section" id="services" style="padding-top:0">
-    <div class="shell">
+  <!-- ================= servicios ================= -->
+  <section class="section" id="services">
+    <div class="shell-wrap">
       <div class="sec-head" data-reveal>
-        <span class="n">05</span>
-        <span class="label">Qué puedo hacer</span>
-        <span class="rule"></span>
-        <span class="aside">De la idea al deploy</span>
+        <span class="num">[05]</span>
+        <span class="prompt"><b>maru</b>@portfolio:~$</span>
+        <span class="type">cat services.json</span>
       </div>
 
-      <div class="services__head" data-reveal>
-        <h2 class="services__title">Servicios <em>concretos</em>.</h2>
-        <p class="services__desc">Sin paquetes inflados. Me adapto al proyecto, al equipo y al plazo.</p>
+      <div class="services__head">
+        <h2 class="h2" data-reveal>Servicios <span class="hl">concretos</span>.</h2>
+        <p class="prose" data-reveal>Sin paquetes inflados. Me adapto al proyecto, al equipo y al plazo.</p>
       </div>
 
       <div class="services">
         <article class="service" data-reveal>
-          <div class="service__top">
-            <div class="service__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/><path d="m7 9 2 2-2 2M12 13h5"/></svg></div>
-            <span class="service__n">01</span>
-          </div>
+          <div class="service__bar"><span>01 — fivem.service</span><em>[active]</em></div>
           <h3>FiveM Development</h3>
           <p>Servidores desde cero, scripts a medida y NUI que no parece sacada de 2014. Sistemas de economía, trabajos, inventarios y paneles internos.</p>
-          <ul><li>Lua</li><li>ESX / QBCore</li><li>NUI</li><li>MySQL</li></ul>
+          <p class="service__tags"><span>lua</span> · esx / qbcore · nui · mysql</p>
         </article>
 
-        <article class="service" data-reveal style="--d:80ms">
-          <div class="service__top">
-            <div class="service__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-            <span class="service__n">02</span>
-          </div>
+        <article class="service" data-reveal style="--d:70ms">
+          <div class="service__bar"><span>02 — web.service</span><em>[active]</em></div>
           <h3>Web Interfaces</h3>
           <p>Landings, tiendas y dashboards con identidad propia. Animación con criterio, accesibilidad y rendimiento medido, no prometido.</p>
-          <ul><li>HTML / CSS</li><li>JavaScript</li><li>React</li><li>Three.js</li></ul>
+          <p class="service__tags"><span>html / css</span> · javascript · react · webgl</p>
         </article>
 
-        <article class="service" data-reveal style="--d:160ms">
-          <div class="service__top">
-            <div class="service__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M9 12h.01M15 12h.01M9 16h6"/></svg></div>
-            <span class="service__n">03</span>
-          </div>
+        <article class="service" data-reveal style="--d:140ms">
+          <div class="service__bar"><span>03 — discord.service</span><em>[active]</em></div>
           <h3>Discord Bots</h3>
           <p>Moderación, logs, tickets, economía y dashboards conectados en tiempo real. Automatizo lo repetitivo para que el staff se dedique a la gente.</p>
-          <ul><li>discord.js</li><li>Node.js</li><li>MongoDB</li><li>Webhooks</li></ul>
+          <p class="service__tags"><span>discord.js</span> · node.js · mongodb · webhooks</p>
         </article>
 
-        <article class="service" data-reveal style="--d:240ms">
-          <div class="service__top">
-            <div class="service__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V3"/><path d="M7 15h10"/></svg></div>
-            <span class="service__n">04</span>
-          </div>
+        <article class="service" data-reveal style="--d:210ms">
+          <div class="service__bar"><span>04 — lab.service</span><em>[experimental]</em></div>
           <h3>Experimentos</h3>
           <p>Minecraft, escenas 3D, mini-juegos y herramientas asistidas por IA. Donde pruebo cosas que luego acaban en proyectos reales.</p>
-          <ul><li>Paper</li><li>WebGL</li><li>IA</li><li>Prototipos</li></ul>
+          <p class="service__tags"><span>paper</span> · webgl · ia · prototipos</p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ================= CONTACT ================= -->
-  <section class="contact" id="contact">
-    <div class="shell">
-      <div class="contact__inner">
-        <div class="contact__eyebrow mono" data-reveal><span class="dot"></span> Disponible · 2026</div>
+  <!-- ================= contacto ================= -->
+  <section class="section contact" id="contact">
+    <div class="shell-wrap">
+      <div class="sec-head" data-reveal>
+        <span class="num">[06]</span>
+        <span class="prompt"><b>maru</b>@portfolio:~$</span>
+        <span class="type">./contact.sh</span>
+      </div>
 
-        <h2 class="contact__title" data-reveal>
-          ¿Tienes una idea?<br>
-          <em>Hagámosla</em> moverse.
-        </h2>
-
-        <p class="contact__sub" data-reveal style="--d:100ms">
-          Proyectos freelance, colaboraciones o una mano extra en tu equipo.
-          Cuéntame qué tienes en la cabeza; respondo rápido y sin rodeos.
-        </p>
-
-        <div class="contact__actions" data-reveal style="--d:180ms">
-          <button class="btn btn--solid magnetic" type="button" data-copy="1037473407756935218" data-label="Copiar Discord">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copiar Discord
-          </button>
-          <a class="btn btn--ghost magnetic" href="https://github.com/MaruMC123" target="_blank" rel="noopener">
-            GitHub
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-          </a>
-          <a class="btn btn--ghost magnetic" href="https://docs.google.com/document/d/19rygWiK5GraV5YJRnjcj_YIN4r1jeFsCuh2C47Rk2G8/edit?usp=sharing" target="_blank" rel="noopener">
-            Portfolio de edición
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-          </a>
+      <div class="contact__grid">
+        <div>
+          <h2 class="contact__title" data-reveal>¿Hablamos?<span class="cursor" aria-hidden="true"></span></h2>
+          <p class="prose" data-reveal>
+            Proyectos freelance, colaboraciones o una mano extra en tu equipo.
+            Cuéntame qué tienes en la cabeza; respondo rápido y sin rodeos.
+          </p>
+          <p class="contact__status" data-reveal><span class="dot" aria-hidden="true"></span> available · 2026</p>
         </div>
 
-        <div class="contact__note" data-reveal style="--d:260ms">
-          <span>Discord · <b>1037473407756935218</b></span>
-          <span>Hora local · <b id="contactClock">--:--</b></span>
-          <span>Respuesta media · <b>&lt; 24 h</b></span>
+        <div class="contact__list" data-reveal>
+          <div class="contact__row">
+            <span class="k">discord</span>
+            <span class="v">1037473407756935218</span>
+            <button class="btn" type="button" data-copy="1037473407756935218">[ copy ]</button>
+          </div>
+          <div class="contact__row">
+            <span class="k">github</span>
+            <a class="v" href="https://github.com/MaruMC123" target="_blank" rel="noopener">github.com/MaruMC123 ↗</a>
+            <span></span>
+          </div>
+          <div class="contact__row">
+            <span class="k">docs</span>
+            <a class="v" href="https://docs.google.com/document/d/19rygWiK5GraV5YJRnjcj_YIN4r1jeFsCuh2C47Rk2G8/edit?usp=sharing" target="_blank" rel="noopener">portfolio de edición ↗</a>
+            <span></span>
+          </div>
+          <div class="contact__row">
+            <span class="k">response</span>
+            <span class="v">&lt; 24 h</span>
+            <span></span>
+          </div>
+          <div class="contact__row">
+            <span class="k">time</span>
+            <span class="v" id="contactClock">--:--</span>
+            <span></span>
+          </div>
         </div>
       </div>
     </div>
@@ -637,55 +607,66 @@
 </main>
 
 <footer class="footer">
-  <div class="shell footer__inner">
-    <div class="footer__brand">MARU<span>®</span></div>
-    <div class="footer__mid">Hecho a mano · sin plantilla · <span id="year">2026</span></div>
+  <div class="shell-wrap footer__inner">
+    <p><span class="prompt"><b>maru</b>@portfolio:~$</span> exit</p>
+    <p class="footer__mid">[process completed] · © <span id="year">2026</span> maru · hecho a mano</p>
     <div class="footer__links">
-      <a href="https://github.com/MaruMC123" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://discord.com/users/1037473407756935218" target="_blank" rel="noopener">Discord</a>
-      <button type="button" id="toTop">Volver arriba <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+      <a href="https://github.com/MaruMC123" target="_blank" rel="noopener">github</a>
+      <a href="https://discord.com/users/1037473407756935218" target="_blank" rel="noopener">discord</a>
+      <button id="toTop" type="button">[ ↑ top ]</button>
     </div>
   </div>
 </footer>
 
-<!-- project modal -->
+<!-- barra de estado -->
+<div class="statusbar" aria-hidden="true">
+  <span class="statusbar__mode">NORMAL</span>
+  <span class="statusbar__mid">~/portfolio — <b id="statusPath">hero</b></span>
+  <span class="statusbar__right">
+    <span class="statusbar__bar"><i id="statusBar"></i></span>
+    <span id="statusPct">000</span>%
+  </span>
+</div>
+
+<!-- preview flotante -->
+<div class="preview win" id="preview" aria-hidden="true">
+  <div class="win__bar">
+    <span class="dots"><i></i><i></i><i></i></span>
+    <span class="win__title" id="previewLabel">preview.png</span>
+    <span class="win__meta">[open]</span>
+  </div>
+  <img id="previewImg" alt="">
+</div>
+
+<!-- modal de proyecto -->
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
-  <div class="modal__panel">
-    <div class="modal__bar">
-      <span class="mono" id="modalIndex">Proyecto</span>
-      <button class="modal__close" id="modalClose" type="button" aria-label="Cerrar proyecto">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-      </button>
+  <div class="modal__panel win">
+    <div class="win__bar">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="win__title" id="modalBar">README.md</span>
+      <button class="win__btn" id="modalClose" type="button" aria-label="Cerrar proyecto [x]">[x]</button>
     </div>
+
     <div class="modal__scroll" id="modalScroll">
-      <div class="modal__hero"><img id="modalCover" src="" alt=""></div>
       <div class="modal__body">
-        <div class="modal__title-row">
-          <h2 class="modal__title" id="modalTitle"></h2>
-          <div class="modal__cat" id="modalCat"></div>
+        <dl class="frontmatter" id="modalMeta"></dl>
+        <h2 class="md__title" id="modalTitle"></h2>
+        <p class="md__sub" id="modalSub"></p>
+
+        <div class="md__content" id="modalDesc"></div>
+
+        <div class="md__gallery-head">
+          <span>## galería</span>
+          <span><span id="modalCount">0</span> imágenes · click para ampliar</span>
         </div>
-        <div class="modal__grid">
-          <div class="modal__desc" id="modalDesc"></div>
-          <aside class="modal__meta">
-            <dl>
-              <div><dt>Rol</dt><dd id="modalRole"></dd></div>
-              <div><dt>Año</dt><dd id="modalYear"></dd></div>
-              <div><dt>Contexto</dt><dd id="modalContext"></dd></div>
-              <div><dt>Stack</dt><dd><div class="modal__stack" id="modalStack"></div></dd></div>
-              <div id="modalLinkRow" hidden><dt>Enlace</dt><dd><a id="modalLink" href="#" target="_blank" rel="noopener" style="color:var(--accent)">Ver proyecto ↗</a></dd></div>
-            </dl>
-          </aside>
-        </div>
-        <div class="modal__gallery-head">
-          <span>Galería · <span id="modalCount">0</span> imágenes</span>
-          <span>Click para ampliar</span>
-        </div>
-        <div class="modal__gallery" id="modalGallery"></div>
+        <div class="md__gallery" id="modalGallery"></div>
+
         <div class="modal__foot">
-          <span class="mono" style="color:var(--dim)">Maru · 2026</span>
+          <span>esc · cerrar · ← → navegar</span>
           <button class="modal__next" id="modalNext" type="button">
-            <span><small>Siguiente proyecto</small><b id="modalNextName"></b></span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <small>next</small>
+            <span id="modalNextName"></span>
+            <span aria-hidden="true">→</span>
           </button>
         </div>
       </div>
@@ -696,27 +677,18 @@
 <!-- lightbox -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Galería ampliada" aria-hidden="true">
   <div class="lightbox__bar">
-    <span class="lightbox__count" id="lightboxCount">1 / 1</span>
-    <button class="lightbox__close" id="lightboxClose" type="button" aria-label="Cerrar galería">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
+    <span id="lightboxCount">1 / 1</span>
+    <button class="win__btn" id="lightboxClose" type="button" aria-label="Cerrar galería [x]">[x]</button>
   </div>
-  <button class="lightbox__nav prev" id="lightboxPrev" type="button" aria-label="Imagen anterior">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-  </button>
-  <img id="lightboxImg" src="" alt="">
-  <button class="lightbox__nav next" id="lightboxNext" type="button" aria-label="Imagen siguiente">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-  </button>
-</div>
-
-<div class="preview" id="preview" aria-hidden="true">
-  <img id="previewImg" src="" alt="">
-  <span class="preview__label" id="previewLabel"></span>
+  <button class="lightbox__nav prev" id="lightboxPrev" type="button" aria-label="Imagen anterior [ ← ]">[ ← ]</button>
+  <img id="lightboxImg" alt="">
+  <button class="lightbox__nav next" id="lightboxNext" type="button" aria-label="Imagen siguiente [ → ]">[ → ]</button>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
 
-<script src="assets/app.js" defer></script>
+<script src="assets/app.js?v=3" defer></script>
 </body>
 </html>
+
+

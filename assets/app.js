@@ -1,5 +1,5 @@
 /* =========================================================
-   MARU — 2026 portfolio · interactions
+   maru@portfolio — terminal edition · interactions
    ========================================================= */
 (() => {
   'use strict';
@@ -9,6 +9,7 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer  = window.matchMedia('(pointer: fine)').matches;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const pad = (n) => String(n).padStart(2, '0');
 
   const store = {
     get(key, fallback) {
@@ -27,7 +28,6 @@
   const PROJECTS = {
     nexumo: {
       title: 'Nexumo',
-      display: 'Nexumo',
       cat: 'E-commerce · Web',
       year: '2026',
       role: 'Diseño UI & frontend',
@@ -49,7 +49,6 @@
 
     maloa: {
       title: 'Maloa Moscato',
-      display: 'Maloa <em>Moscato</em>',
       cat: 'Branding · Web',
       year: '2026',
       role: 'Dirección de arte & frontend',
@@ -70,7 +69,6 @@
 
     spainrp: {
       title: 'Spain RP',
-      display: 'Spain <em>RP</em>',
       cat: 'Plataforma web · Game UI',
       year: '2026',
       role: 'Diseño & desarrollo',
@@ -94,7 +92,6 @@
 
     frente: {
       title: 'Frente Hispano',
-      display: 'Frente <em>Hispano</em>',
       cat: 'FiveM · Web & Dashboard',
       year: '2026',
       role: 'Diseño & desarrollo fullstack',
@@ -116,7 +113,6 @@
 
     phantom: {
       title: 'Phantom RP',
-      display: 'Phantom <em>RP</em>',
       cat: 'FiveM · NUI',
       year: '2026',
       role: 'UI design & NUI',
@@ -138,7 +134,6 @@
 
     bot: {
       title: 'Ops Bot',
-      display: 'Ops <em>Bot</em>',
       cat: 'Discord · Automatización',
       year: '2026',
       role: 'Desarrollo & diseño de embeds',
@@ -160,7 +155,6 @@
 
     fivemkit: {
       title: 'FiveM Essentials',
-      display: 'FiveM <em>Essentials</em>',
       cat: 'FiveM · Scripts & UI',
       year: '2025',
       role: 'Scripting & NUI',
@@ -181,7 +175,6 @@
 
     astri: {
       title: 'Astri Hub',
-      display: 'Astri <em>Hub</em>',
       cat: 'Minecraft · Founder',
       year: '2025',
       role: 'Founder & desarrollo',
@@ -199,1267 +192,1418 @@
   };
 
   const ORDER = Object.keys(PROJECTS);
-  const pad = (n) => String(n).padStart(2, '0');
 
   /* =========================================================
-     loader
+     reloj, fecha, navegación
      ========================================================= */
-  const loader = $('#loader');
-  const loadCount = $('#loadCount');
-  const loadBar = $('#loadBar');
 
-  document.body.classList.add('is-locked');
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  const finishLoad = () => {
-    if (!loader) return;
-    loader.classList.add('done');
-    document.body.classList.remove('is-locked');
-    document.body.classList.add('is-loaded');
-    window.setTimeout(() => loader.remove(), 1300);
-  };
+  const clockTargets = [$('#clock'), $('#contactClock')].filter(Boolean);
 
-  if (loader) {
-    const duration = reduceMotion ? 250 : 1150;
-    // Red de seguridad: aunque rAF se pause (pestaña en segundo plano), el loader no se queda atascado.
-    window.setTimeout(finishLoad, duration + 1500);
-    const start = performance.now();
-    const tick = (now) => {
-      const p = clamp((now - start) / duration, 0, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      if (loadCount) loadCount.textContent = String(Math.round(eased * 100)).padStart(3, '0');
-      if (loadBar) loadBar.style.transform = `scaleX(${eased})`;
-      if (p < 1) requestAnimationFrame(tick);
-      else window.setTimeout(finishLoad, 120);
-    };
-    requestAnimationFrame(tick);
-  } else {
-    document.body.classList.remove('is-locked');
-    document.body.classList.add('is-loaded');
-  }
-
-  /* =========================================================
-     clock
-     ========================================================= */
-  const clockEls = [$('#navClock'), $('#heroClock'), $('#contactClock')].filter(Boolean);
-  const fmtTime = new Intl.DateTimeFormat('es-ES', {
-    hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Madrid'
-  });
   const tickClock = () => {
-    const t = fmtTime.format(new Date());
-    clockEls.forEach((el) => { el.textContent = t; });
+    const now = new Date();
+    const time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    clockTargets.forEach((el) => { el.textContent = time; });
   };
   tickClock();
-  window.setInterval(tickClock, 15000);
+  window.setInterval(tickClock, 1000);
 
   const yearEl = $('#year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  /* =========================================================
-     navigation / menu
-     ========================================================= */
-  const nav = $('#nav');
-  const burger = $('#burger');
-  const menu = $('#menu');
-
-  const closeMenu = () => {
-    if (!menu || !burger) return;
-    menu.classList.remove('open');
-    menu.setAttribute('aria-hidden', 'true');
-    burger.setAttribute('aria-expanded', 'false');
-    burger.setAttribute('aria-label', 'Abrir menú');
-    document.body.classList.remove('is-locked');
-  };
-
-  if (burger && menu) {
-    burger.addEventListener('click', () => {
-      const open = !menu.classList.contains('open');
-      menu.classList.toggle('open', open);
-      menu.setAttribute('aria-hidden', open ? 'false' : 'true');
-      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-      burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
-      document.body.classList.toggle('is-locked', open);
-    });
+  const loginEl = $('#lastLogin');
+  if (loginEl) {
+    const d = new Date(Date.now() - 1000 * 60 * 8);
+    loginEl.textContent = `${DAYS[d.getDay()]} ${MONTHS[d.getMonth()]} ${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} ${d.getFullYear()}`;
   }
+
+  const menu = $('#menu');
+  const menuBtn = $('#menuBtn');
+
+  const setMenu = (open, restoreFocus = true) => {
+    if (!menu || !menuBtn) return;
+    menu.classList.toggle('open', open);
+    menu.setAttribute('aria-hidden', String(!open));
+    menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('is-locked', open);
+    if (open) {
+      const first = menu.querySelector('a, button');
+      if (first) first.focus({ preventScroll: true });
+    } else if (restoreFocus) {
+      menuBtn.focus({ preventScroll: true });
+    }
+  };
 
   const scrollToId = (id) => {
     const target = document.getElementById(id);
-    if (!target) return;
+    if (!target) return false;
     target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    try { history.replaceState(null, '', `#${id}`); } catch { /* file:// */ }
+    return true;
   };
 
   $$('[data-scroll]').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      const id = el.dataset.scroll;
-      if (!id) return;
-      e.preventDefault();
-      closeMenu();
+    el.addEventListener('click', (event) => {
+      const id = el.getAttribute('data-scroll');
+      if (!id || !document.getElementById(id)) return;
+      event.preventDefault();
+      if (menu && menu.classList.contains('open')) setMenu(false, false);
       scrollToId(id);
     });
   });
 
+  if (menuBtn) menuBtn.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
+  const menuClose = $('#menuClose');
+  if (menuClose) menuClose.addEventListener('click', () => setMenu(false));
   if (menu) {
-    $$('.menu__links a').forEach((a, i) => {
-      a.style.transitionDelay = `${120 + i * 55}ms`;
+    menu.addEventListener('click', (event) => {
+      if (event.target === menu) setMenu(false);
     });
   }
 
   const toTop = $('#toTop');
-  if (toTop) {
-    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
-  }
+  if (toTop) toTop.addEventListener('click', () => scrollToId('hero'));
 
   /* =========================================================
-     reveal / counters / signature
+     scroll · progreso · barra de estado
      ========================================================= */
-  const revealEls = $$('[data-reveal]');
-  if (reduceMotion || !('IntersectionObserver' in window)) {
-    revealEls.forEach((el) => el.classList.add('in'));
-  } else {
-    const revealObs = new IntersectionObserver((entries, obs) => {
+
+  const progressBar = $('#progressBar');
+  const statusFill = $('#statusBar');
+  const statusPct = $('#statusPct');
+  const statusPath = $('#statusPath');
+  const navLinks = $$('.nav a[data-scroll]');
+  const watchSections = $$('main > section[id]');
+
+  let scrollQueued = false;
+
+  const syncActiveSection = () => {
+    if (!watchSections.length) return;
+    const marker = window.innerHeight * 0.38;
+    let current = watchSections[0].id;
+
+    watchSections.forEach((section) => {
+      if (section.getBoundingClientRect().top <= marker) current = section.id;
+    });
+
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    if (atBottom) current = watchSections[watchSections.length - 1].id;
+
+    if (statusPath) statusPath.textContent = current;
+
+    navLinks.forEach((link) => {
+      const on = link.getAttribute('data-scroll') === current;
+      link.classList.toggle('active', on);
+      if (on) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  const renderScroll = () => {
+    scrollQueued = false;
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - doc.clientHeight;
+    const ratio = max > 0 ? clamp(doc.scrollTop / max, 0, 1) : 0;
+
+    if (progressBar) progressBar.style.transform = `scaleX(${ratio})`;
+    if (statusFill) statusFill.style.width = `${(ratio * 100).toFixed(1)}%`;
+    if (statusPct) statusPct.textContent = String(Math.round(ratio * 100)).padStart(3, '0');
+
+    syncActiveSection();
+  };
+
+  const queueScroll = () => {
+    if (scrollQueued) return;
+    scrollQueued = true;
+    requestAnimationFrame(renderScroll);
+  };
+
+  window.addEventListener('scroll', queueScroll, { passive: true });
+  window.addEventListener('resize', queueScroll, { passive: true });
+  renderScroll();
+
+  /* =========================================================
+     reveals · contadores
+     ========================================================= */
+
+  const revealTargets = $$('[data-reveal]');
+
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add('in');
-        obs.unobserve(entry.target);
+        revealObserver.unobserve(entry.target);
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    revealEls.forEach((el) => revealObs.observe(el));
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+
+    revealTargets.forEach((el) => revealObserver.observe(el));
+  } else {
+    revealTargets.forEach((el) => el.classList.add('in'));
   }
 
-  const signature = $('#signature');
-  if (signature) {
-    if (reduceMotion || !('IntersectionObserver' in window)) signature.classList.add('in');
-    else {
-      const sigObs = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) { signature.classList.add('in'); sigObs.disconnect(); }
-        });
-      }, { threshold: 0.4 });
-      sigObs.observe(signature);
-    }
-  }
-
-  // counters
-  const counters = $$('[data-count]');
-  const animateCounter = (el) => {
+  const animateCount = (el) => {
     const target = Number(el.dataset.count) || 0;
     const suffix = el.dataset.suffix || '';
-    if (reduceMotion) { el.textContent = target + suffix; return; }
-    const duration = 1300;
+    const finish = () => { el.textContent = `${target}${suffix}`; };
+
+    if (reduceMotion) return finish();
+
+    const duration = 1000;
     const start = performance.now();
-    const step = (now) => {
-      const p = clamp((now - start) / duration, 0, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(target * eased) + suffix;
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  };
-  if ('IntersectionObserver' in window) {
-    const countObs = new IntersectionObserver((entries, obs) => {
-      entries.forEach((e) => {
-        if (!e.isIntersecting) return;
-        animateCounter(e.target);
-        obs.unobserve(e.target);
-      });
-    }, { threshold: 0.6 });
-    counters.forEach((el) => countObs.observe(el));
-  } else {
-    counters.forEach(animateCounter);
-  }
-
-  /* =========================================================
-     scroll progress + rail + timeline drawing
-     ========================================================= */
-  const progressBar = $('#progressBar');
-  const railLinks = $$('[data-rail]');
-  const timeline = $('#timeline');
-  const timelinePath = $('#timelinePath');
-  const timelineTip = $('#timelineTip');
-  const navLinks = $$('.nav__links a');
-
-  const sectionIds = ['about', 'work', 'play', 'path', 'contact'];
-  let scrollTicking = false;
-
-  const updateScrollUi = () => {
-    scrollTicking = false;
-    const doc = document.documentElement;
-    const max = doc.scrollHeight - window.innerHeight;
-    const p = max > 0 ? clamp(window.scrollY / max, 0, 1) : 0;
-
-    if (progressBar) progressBar.style.transform = `scaleX(${p})`;
-    if (nav) nav.classList.toggle('scrolled', window.scrollY > 24);
-
-    // active section
-    let current = '';
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      if (r.top <= window.innerHeight * 0.45 && r.bottom > window.innerHeight * 0.35) current = id;
-    });
-    railLinks.forEach((a) => a.classList.toggle('active', a.dataset.rail === current));
-    navLinks.forEach((a) => a.classList.toggle('active', a.dataset.scroll === current));
-
-    // timeline line drawing
-    if (timeline && timelinePath) {
-      const r = timeline.getBoundingClientRect();
-      const start = window.innerHeight * 0.78;
-      const raw = (start - r.top) / Math.max(r.height, 1);
-      const lineProgress = clamp(raw, 0, 1);
-      timelinePath.style.strokeDashoffset = String(1 - lineProgress);
-      if (timelineTip) {
-        timelineTip.style.top = `${lineProgress * 100}%`;
-        timelineTip.classList.toggle('on', lineProgress > 0.01 && lineProgress < 0.995);
-      }
-    }
-  };
-
-  const requestScrollUi = () => {
-    if (scrollTicking) return;
-    scrollTicking = true;
-    requestAnimationFrame(updateScrollUi);
-  };
-
-  window.addEventListener('scroll', requestScrollUi, { passive: true });
-  window.addEventListener('resize', requestScrollUi);
-  updateScrollUi();
-
-  // timeline items activation
-  const timelineItems = $$('.timeline__item');
-  if ('IntersectionObserver' in window) {
-    const lineObs = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('in'); lineObs.unobserve(e.target); }
-      });
-    }, { threshold: 0.35 });
-    timelineItems.forEach((el) => lineObs.observe(el));
-  } else {
-    timelineItems.forEach((el) => el.classList.add('in'));
-  }
-
-  /* =========================================================
-     flow-field canvas
-     ========================================================= */
-  const flow = $('#flow');
-  if (flow) {
-    const ctx = flow.getContext('2d');
-    let width = 0, height = 0, dpr = 1;
-    let particles = [];
-    let raf = 0;
-    let running = true;
-    let visible = true;
-    const pointer = { x: 0, y: 0, active: false };
-
-    const makeParticle = (spawnAnywhere = true) => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      px: 0, py: 0,
-      life: spawnAnywhere ? Math.random() * 260 : 0,
-      accent: Math.random() < 0.08,
-      speed: 0.35 + Math.random() * 0.7
-    });
-
-    const seed = () => {
-      const count = reduceMotion ? 120 : clamp(Math.floor((width * height) / 3800), 140, 480);
-      particles = Array.from({ length: count }, () => makeParticle(true));
-      particles.forEach((p) => { p.px = p.x; p.py = p.y; });
-    };
-
-    const resize = () => {
-      const rect = flow.getBoundingClientRect();
-      width = Math.max(rect.width, 1);
-      height = Math.max(rect.height, 1);
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      flow.width = Math.floor(width * dpr);
-      flow.height = Math.floor(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = '#08080a';
-      ctx.fillRect(0, 0, width, height);
-      seed();
-      if (reduceMotion) drawStatic();
-    };
-
-    const field = (x, y, t) =>
-      (Math.sin(x * 0.0023 + t * 0.32) +
-       Math.cos(y * 0.0027 - t * 0.22) +
-       Math.sin((x + y) * 0.0013 + t * 0.16)) * Math.PI * 0.75;
-
-    const drawStatic = () => {
-      ctx.fillStyle = 'rgba(242,240,234,.16)';
-      for (let i = 0; i < 260; i++) {
-        const x = (i * 137.5) % width;
-        const y = (i * 89.3) % height;
-        ctx.fillRect(x, y, 1, 1);
-      }
-    };
 
     const frame = (now) => {
-      if (!running) return;
-      raf = requestAnimationFrame(frame);
-      if (!visible) return;
-
-      const t = now * 0.001;
-      // trailing fade
-      ctx.fillStyle = 'rgba(8,8,10,.07)';
-      ctx.fillRect(0, 0, width, height);
-      ctx.lineWidth = 0.7;
-
-      for (const p of particles) {
-        const angle = field(p.x, p.y, t);
-        const nx = p.x + Math.cos(angle) * p.speed;
-        const ny = p.y + Math.sin(angle) * p.speed;
-
-        ctx.beginPath();
-        ctx.moveTo(p.px, p.py);
-        ctx.lineTo(nx, ny);
-        ctx.strokeStyle = p.accent ? 'rgba(216,255,62,.42)' : 'rgba(242,240,234,.12)';
-        ctx.stroke();
-
-        // soft pointer attraction
-        if (pointer.active) {
-          const dx = pointer.x - nx;
-          const dy = pointer.y - ny;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < 18000 && d2 > 1) {
-            const f = 0.35 / Math.sqrt(d2);
-            p.x += dx * f * 2;
-            p.y += dy * f * 2;
-          }
-        }
-
-        p.px = nx;
-        p.py = ny;
-        p.x = nx;
-        p.y = ny;
-        p.life += 1;
-
-        if (p.x < -20 || p.x > width + 20 || p.y < -20 || p.y > height + 20 || p.life > 300) {
-          Object.assign(p, makeParticle(false));
-          p.px = p.x;
-          p.py = p.y;
-        }
-      }
+      const t = clamp((now - start) / duration, 0, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = `${Math.round(target * eased)}${suffix}`;
+      if (t < 1) requestAnimationFrame(frame);
+      else finish();
     };
 
-    flow.addEventListener('pointermove', (e) => {
-      const r = flow.getBoundingClientRect();
-      pointer.x = e.clientX - r.left;
-      pointer.y = e.clientY - r.top;
-      pointer.active = true;
-    }, { passive: true });
-    flow.addEventListener('pointerleave', () => { pointer.active = false; });
+    requestAnimationFrame(frame);
+  };
 
-    if ('IntersectionObserver' in window) {
-      const visObs = new IntersectionObserver((entries) => {
-        visible = entries[0]?.isIntersecting ?? true;
-      }, { threshold: 0 });
-      visObs.observe(flow);
+  const counters = $$('[data-count]');
+
+  if ('IntersectionObserver' in window) {
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        animateCount(entry.target);
+        countObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.5 });
+
+    counters.forEach((el) => countObserver.observe(el));
+  } else {
+    counters.forEach((el) => animateCount(el));
+  }
+
+  /* =========================================================
+     consola interactiva
+     ========================================================= */
+
+  const shellOut = $('#shellOut');
+  const shellInput = $('#shellInput');
+  const shellText = $('#shellText');
+  const shellLine = $('#shellLine');
+
+  const history = [];
+  let historyIndex = -1;
+
+  const printLine = (text, cls = '') => {
+    if (!shellOut) return;
+    const div = document.createElement('div');
+    if (cls) div.className = cls;
+    div.textContent = text;
+    shellOut.appendChild(div);
+    while (shellOut.children.length > 80) shellOut.firstElementChild.remove();
+    shellOut.scrollTop = shellOut.scrollHeight;
+  };
+
+  const printHTML = (html, cls = '') => {
+    if (!shellOut) return;
+    const div = document.createElement('div');
+    if (cls) div.className = cls;
+    div.innerHTML = html;
+    shellOut.appendChild(div);
+    while (shellOut.children.length > 80) shellOut.firstElementChild.remove();
+    shellOut.scrollTop = shellOut.scrollHeight;
+  };
+
+  const esc = (value) => String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+  const sectionsList = ['about', 'work', 'play', 'path', 'services', 'contact'];
+  const commandNames = [
+    'help', 'ls', 'open', 'cat', 'whoami', 'neofetch', 'contact', 'socials',
+    'cd', 'clear', 'date', 'pwd', 'echo', 'sudo', 'theme', 'banner', 'exit'
+  ];
+
+  const projectNames = ORDER;
+
+  const helpText = () => {
+    const rows = [
+      ['help', 'esta ayuda'],
+      ['ls', 'lista ~/projects'],
+      ['open <proyecto>', 'abre su README.md'],
+      ['cat <archivo>', 'about.md · services.json · contact.sh'],
+      ['whoami', 'quién soy'],
+      ['neofetch', 'ficha del sistema'],
+      ['contact', 'cómo contactarme'],
+      ['cd <sección>', 'navega por la página'],
+      ['date · pwd · echo', 'lo obvio'],
+      ['clear', 'limpia la terminal'],
+      ['exit', 'cierra la sesión']
+    ];
+    const width = Math.max(...rows.map(([cmd]) => cmd.length)) + 2;
+    return rows.map(([cmd, label]) => `${cmd.padEnd(width)}${label}`).join('\n');
+  };
+
+  const COMMANDS = {
+    help() {
+      printLine('comandos disponibles:', 'ok');
+      printLine(helpText(), 'pre');
+      printLine('tip: Tab autocompleta · ↑ ↓ historial · Ctrl+L limpia');
+    },
+
+    ls() {
+      const width = Math.max(...ORDER.map((id) => PROJECTS[id].title.length)) + 4;
+      ORDER.forEach((id) => {
+        const p = PROJECTS[id];
+        printLine(`drwxr-xr-x  ${id.padEnd(width)}${p.cat.padEnd(26)}${p.year}`);
+      });
+      printLine(`total ${ORDER.length} · usa "open <proyecto>" para leer el README`);
+    },
+
+    open(args) {
+      const id = (args[0] || '').toLowerCase().replace(/\/$/, '');
+      if (!id) {
+        printLine(`proyectos: ${ORDER.join(', ')}`);
+        return;
+      }
+      if (!PROJECTS[id]) {
+        printLine(`open: no such project: ${id}`, 'err');
+        return;
+      }
+      printLine(`abriendo ${id}/README.md ...`, 'ok');
+      openProject(id);
+    },
+
+    cat(args) {
+      const file = (args[0] || '').toLowerCase();
+      if (!file) {
+        printLine('cat: falta el nombre del archivo', 'err');
+        return;
+      }
+      if (file === 'about.md' || file === 'about') {
+        printLine('maru — fullstack developer · Madrid, ES');
+        printLine('Interfaces y sistemas que se sienten vivos: FiveM, web, bots de Discord');
+        printLine('y experimentos interactivos. HTML, CSS, JavaScript y Lua, con Node.js');
+        printLine('cuando el proyecto pide backend.');
+        return;
+      }
+      if (file === 'services.json') {
+        printLine(`{
+  "fivem":     "servidores, scripts a medida, NUI",
+  "web":       "landings, tiendas, dashboards",
+  "discord":   "moderación, logs, tickets, economía",
+  "lab":       "minecraft, 3D, microjuegos, IA"
+}`, 'pre');
+        return;
+      }
+      if (file === 'contact.sh') {
+        printLine('discord  1037473407756935218');
+        printLine('github   github.com/MaruMC123');
+        printLine('response < 24 h');
+        return;
+      }
+      if (PROJECTS[file]) {
+        printLine(`abriendo ${file}/README.md ...`, 'ok');
+        openProject(file);
+        return;
+      }
+      printLine(`cat: ${file}: no such file or directory`, 'err');
+    },
+
+    whoami() {
+      printLine('maru', 'ok');
+      printLine('fullstack developer · Madrid, ES');
+      printLine('fivem · web · discord bots · interfaces');
+    },
+
+    neofetch() {
+      const logo = [
+        '      .---.',
+        '     / o o \\',
+        '     \\  ^  /',
+        "      '---'",
+        '      /   \\',
+        '     /_____\\'
+      ];
+      const info = [
+        'maru@portfolio',
+        '--------------',
+        'OS ......... Windows 11',
+        'Role ....... fullstack developer',
+        'Shell ...... zsh 5.9',
+        'Uptime ..... 4 years',
+        'Stack ...... html css js lua node',
+        'Location ... Madrid, ES'
+      ];
+      const lines = [];
+      for (let i = 0; i < Math.max(logo.length, info.length); i += 1) {
+        lines.push(`${(logo[i] || '').padEnd(20)}${info[i] || ''}`);
+      }
+      printLine(lines.join('\n'), 'pre');
+    },
+
+    contact() {
+      printLine('discord   1037473407756935218', 'ok');
+      printLine('github    github.com/MaruMC123');
+      printLine('docs      portfolio de edición');
+      printLine('response  < 24 h');
+      printLine('o usa los enlaces de la sección contacto.');
+    },
+
+    socials() {
+      COMMANDS.contact();
+    },
+
+    cd(args) {
+      const target = (args[0] || '~').replace(/^~\//, '').replace(/\/$/, '');
+      if (target === '~' || target === '' || target === 'portfolio') {
+        scrollToId('hero');
+        printLine('~/portfolio');
+        return;
+      }
+      if (target === '..') {
+        scrollToId('hero');
+        printLine('~/');
+        return;
+      }
+      if (sectionsList.includes(target)) {
+        scrollToId(target);
+        printLine(`~/portfolio/${target}`);
+        return;
+      }
+      printLine(`cd: no such file or directory: ${target}`, 'err');
+    },
+
+    clear() {
+      if (shellOut) shellOut.innerHTML = '';
+    },
+
+    date() {
+      printLine(new Date().toString());
+    },
+
+    pwd() {
+      printLine('/home/maru/portfolio');
+    },
+
+    echo(args, raw) {
+      const text = raw.replace(/^echo\s*/i, '');
+      printLine(text || '');
+    },
+
+    sudo() {
+      printLine('[sudo] password for maru: ********');
+      printLine('maru is not in the sudoers file. This incident will be reported.', 'err');
+    },
+
+    theme(args) {
+      const scan = $('.scanlines');
+      if (!scan) return;
+      const mode = (args[0] || '').toLowerCase();
+      if (mode === 'off') {
+        scan.style.display = 'none';
+        printLine('scanlines off');
+      } else if (mode === 'on') {
+        scan.style.display = '';
+        printLine('scanlines on');
+      } else {
+        printLine('uso: theme on | theme off');
+      }
+    },
+
+    banner() {
+      printLine('███╗   ███╗ █████╗ ██████╗ ██╗   ██╗\n████╗ ████║██╔══██╗██╔══██╗██║   ██║\n██╔████╔██║███████║██████╔╝██║   ██║\n██║╚██╔╝██║██╔══██║██╔══██╗██║   ██║\n██║ ╚═╝ ██║██║  ██║██║  ██║╚██████╔╝\n╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ', 'pre');
+    },
+
+    exit() {
+      printLine('logout');
+      printLine('[process completed]', 'ok');
+      if (shellInput) shellInput.blur();
     }
-    document.addEventListener('visibilitychange', () => {
-      visible = !document.hidden && document.getElementById('hero')?.getBoundingClientRect().bottom > 0;
+  };
+
+  const syncShellText = () => {
+    if (!shellText || !shellInput) return;
+    const value = shellInput.value;
+    if (!value) {
+      shellText.textContent = '';
+      return;
+    }
+    const size = parseFloat(getComputedStyle(shellText).fontSize) || 13;
+    const charWidth = size * 0.6;
+    const available = shellText.parentElement ? shellText.parentElement.clientWidth : 400;
+    const maxChars = Math.max(6, Math.floor(available / charWidth) - 2);
+    shellText.textContent = value.length > maxChars ? `…${value.slice(-(maxChars - 1))}` : value;
+  };
+
+  const resetHistoryCursor = () => { historyIndex = -1; };
+
+  const runCommand = (raw) => {
+    const value = typeof raw === 'string' ? raw : (shellInput ? shellInput.value : '');
+    const line = value.trim();
+
+    if (line) {
+      printHTML(`<span class="dim">maru@portfolio:~$</span> ${esc(line)}`);
+      history.push(line);
+      if (history.length > 40) history.shift();
+    }
+    resetHistoryCursor();
+
+    if (shellInput) {
+      shellInput.value = '';
+      syncShellText();
+    }
+
+    if (!line) return;
+
+    const [name, ...args] = line.split(/\s+/);
+    const key = name.toLowerCase();
+    const handler = COMMANDS[key];
+
+    if (handler) {
+      handler(args, line);
+      return;
+    }
+
+    if (PROJECTS[key]) {
+      printLine(`abriendo ${key}/README.md ...`, 'ok');
+      openProject(key);
+      return;
+    }
+
+    printLine(`zsh: command not found: ${name}`, 'err');
+    printLine('prueba con "help" o "ls".');
+  };
+
+  const completeInput = () => {
+    if (!shellInput) return;
+    const value = shellInput.value;
+    const parts = value.split(/\s+/);
+    const trailingSpace = /\s$/.test(value);
+
+    let pool = commandNames;
+    let prefix = parts[0];
+
+    if (parts.length > 1 || trailingSpace) {
+      const base = parts[0].toLowerCase();
+      if (base === 'open' || base === 'cat') {
+        pool = projectNames;
+        prefix = trailingSpace ? '' : parts[parts.length - 1];
+      } else if (base === 'cd') {
+        pool = sectionsList;
+        prefix = trailingSpace ? '' : parts[parts.length - 1];
+      } else {
+        pool = commandNames;
+        prefix = parts[parts.length - 1];
+      }
+    }
+
+    const matches = pool.filter((item) => item.startsWith(prefix.toLowerCase()));
+
+    if (matches.length === 0) return;
+    if (matches.length === 1) {
+      if (parts.length > 1 || trailingSpace) {
+        parts[parts.length - 1] = matches[0];
+        shellInput.value = parts.join(' ');
+      } else {
+        shellInput.value = matches[0];
+      }
+      syncShellText();
+      return;
+    }
+
+    printLine(matches.join('  '));
+  };
+
+  if (shellInput) {
+    shellInput.addEventListener('input', syncShellText);
+
+    shellInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        completeInput();
+        return;
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        runCommand();
+        return;
+      }
+
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (!history.length) return;
+        if (historyIndex === -1) historyIndex = history.length - 1;
+        else historyIndex = Math.max(0, historyIndex - 1);
+        shellInput.value = history[historyIndex];
+        syncShellText();
+        return;
+      }
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (historyIndex === -1) return;
+        historyIndex += 1;
+        if (historyIndex >= history.length) {
+          historyIndex = -1;
+          shellInput.value = '';
+        } else {
+          shellInput.value = history[historyIndex];
+        }
+        syncShellText();
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        shellInput.blur();
+        return;
+      }
+
+      if (event.key.toLowerCase() === 'l' && event.ctrlKey) {
+        event.preventDefault();
+        COMMANDS.clear();
+      }
     });
 
-    window.addEventListener('resize', resize);
+    if (shellLine) {
+      shellLine.addEventListener('click', (event) => {
+        if (event.target === shellInput) return;
+        shellInput.focus();
+      });
+    }
 
-    resize();
-    if (!reduceMotion) raf = requestAnimationFrame(frame);
+    $$('.shell__quick [data-cmd]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        runCommand(btn.dataset.cmd);
+        shellInput.focus();
+      });
+    });
   }
 
   /* =========================================================
-     deck pointer parallax
+     preview flotante
      ========================================================= */
-  const deck = $('#deck');
-  if (deck && finePointer && !reduceMotion) {
-    const cards = $$('.deck__card', deck);
-    const hero = $('#hero');
-    hero?.addEventListener('pointermove', (e) => {
-      const x = e.clientX / window.innerWidth - 0.5;
-      const y = e.clientY / window.innerHeight - 0.5;
-      cards.forEach((card, i) => {
-        const depth = (i + 1) * 6;
-        card.style.setProperty('--px', `${(-x * depth).toFixed(2)}px`);
-        card.style.setProperty('--py', `${(-y * depth).toFixed(2)}px`);
-      });
-    }, { passive: true });
-    hero?.addEventListener('pointerleave', () => {
-      cards.forEach((card) => {
-        card.style.setProperty('--px', '0px');
-        card.style.setProperty('--py', '0px');
-      });
-    });
-  }
-
-  /* =========================================================
-     work filters + floating preview + scramble
-     ========================================================= */
-  const rows = $$('.work-row');
-  const workCount = $('#workCount');
-  const filterButtons = $$('.filters button');
-
-  const visibleLabel = (count) => `${pad(count)} ${count === 1 ? 'proyecto' : 'proyectos'}`;
-
-  filterButtons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const filter = btn.dataset.filter;
-      filterButtons.forEach((b) => b.classList.toggle('active', b === btn));
-      let shown = 0;
-      rows.forEach((row) => {
-        const match = filter === 'all' || row.dataset.cat === filter;
-        row.classList.toggle('is-hidden', !match);
-        if (match) shown++;
-      });
-      if (workCount) workCount.textContent = visibleLabel(shown);
-    });
-  });
 
   const preview = $('#preview');
   const previewImg = $('#previewImg');
   const previewLabel = $('#previewLabel');
-  let previewVisible = false;
-  let previewX = 0, previewY = 0, previewTX = 0, previewTY = 0;
+  const workRows = $$('.work-row');
 
-  const previewLoop = () => {
-    if (!previewVisible) return;
-    previewX += (previewTX - previewX) * 0.16;
-    previewY += (previewTY - previewY) * 0.16;
-    if (preview) preview.style.transform = `translate3d(${previewX}px, ${previewY}px, 0) scale(1) rotate(-2deg)`;
-    requestAnimationFrame(previewLoop);
-  };
+  if (preview && previewImg && previewLabel && finePointer) {
+    const placePreview = (event) => {
+      const width = preview.offsetWidth;
+      const height = preview.offsetHeight;
+      const gap = 18;
+      let x = event.clientX + gap;
+      let y = event.clientY + gap;
 
-  const showPreview = (row, e) => {
-    if (!preview || !previewImg || !finePointer || window.innerWidth < 900) return;
-    const project = PROJECTS[row.dataset.project];
-    if (!project) return;
-    previewImg.src = `img/web/${project.cover}-thumb.webp`;
-    previewImg.alt = project.title;
-    if (previewLabel) previewLabel.textContent = project.title;
-    previewX = e.clientX + 24;
-    previewY = e.clientY - 110;
-    previewTX = previewX;
-    previewTY = previewY;
-    previewVisible = true;
-    preview.classList.add('on');
-    preview.style.transform = `translate3d(${previewX}px, ${previewY}px, 0) scale(1) rotate(-2deg)`;
-    requestAnimationFrame(previewLoop);
-  };
+      if (x + width > window.innerWidth - 12) x = event.clientX - width - gap;
+      if (y + height > window.innerHeight - 12) y = window.innerHeight - height - 12;
 
-  const movePreview = (e) => {
-    const w = preview ? preview.offsetWidth : 380;
-    const h = preview ? preview.offsetHeight : 238;
-    previewTX = clamp(e.clientX + 28, 10, window.innerWidth - w - 14);
-    previewTY = clamp(e.clientY - h / 2, 10, window.innerHeight - h - 14);
-  };
+      preview.style.left = `${Math.max(12, x)}px`;
+      preview.style.top = `${Math.max(12, y)}px`;
+    };
 
-  const hidePreview = () => {
-    previewVisible = false;
-    preview?.classList.remove('on');
-  };
-
-  rows.forEach((row) => {
-    row.addEventListener('mouseenter', (e) => showPreview(row, e));
-    row.addEventListener('mousemove', movePreview);
-    row.addEventListener('mouseleave', hidePreview);
-    row.addEventListener('focus', () => {
+    const showPreview = (row, event) => {
       const project = PROJECTS[row.dataset.project];
-      if (project && preview && finePointer) {
-        previewImg.src = `img/web/${project.cover}-thumb.webp`;
-        if (previewLabel) previewLabel.textContent = project.title;
-        const r = row.getBoundingClientRect();
-        previewX = previewTX = window.innerWidth - 420;
-        previewY = previewTY = r.top + r.height / 2 - 120;
-        previewVisible = true;
-        preview.classList.add('on');
-        requestAnimationFrame(previewLoop);
-      }
+      if (!project) return;
+      previewImg.src = IMG(project.cover);
+      previewImg.alt = `${project.title} — preview`;
+      previewLabel.textContent = `${row.dataset.project}/preview.png`;
+      preview.classList.add('on');
+      placePreview(event);
+    };
+
+    workRows.forEach((row) => {
+      row.addEventListener('pointerenter', (event) => {
+        if (event.pointerType && event.pointerType !== 'mouse') return;
+        showPreview(row, event);
+      });
+
+      row.addEventListener('pointermove', (event) => {
+        if (!preview.classList.contains('on')) return;
+        placePreview(event);
+      });
+
+      row.addEventListener('pointerleave', () => preview.classList.remove('on'));
+      row.addEventListener('focus', () => preview.classList.remove('on'));
     });
-    row.addEventListener('blur', hidePreview);
 
-    const title = $('[data-scramble]', row);
-    if (title && !reduceMotion) {
-      row.addEventListener('mouseenter', () => scramble(title));
-      row.addEventListener('focus', () => scramble(title));
-    }
-  });
-
-  const scrambleChars = '!<>-_\\/[]{}=+*^?#';
-  const scrambleTimers = new WeakMap();
-  function scramble(el) {
-    const original = el.dataset.original || el.textContent;
-    el.dataset.original = original;
-    clearInterval(scrambleTimers.get(el));
-    let frame = 0;
-    const timer = setInterval(() => {
-      frame++;
-      el.textContent = original.split('').map((ch, i) => {
-        if (ch === ' ') return ' ';
-        if (i < frame / 2) return original[i];
-        return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-      }).join('');
-      if (frame > original.length * 2 + 6) {
-        clearInterval(timer);
-        el.textContent = original;
-      }
-    }, 26);
-    scrambleTimers.set(el, timer);
+    window.addEventListener('scroll', () => preview.classList.remove('on'), { passive: true });
   }
 
   /* =========================================================
-     modal + lightbox
+     filtros de proyectos
      ========================================================= */
+
+  const filterButtons = $$('.filters [data-filter]');
+  const workCount = $('#workCount');
+
+  filterButtons.forEach((btn) => {
+    btn.setAttribute('aria-pressed', String(btn.classList.contains('active')));
+
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+
+      filterButtons.forEach((other) => {
+        const on = other === btn;
+        other.classList.toggle('active', on);
+        other.setAttribute('aria-pressed', String(on));
+      });
+
+      let visible = 0;
+      workRows.forEach((row) => {
+        const show = filter === 'all' || row.dataset.cat === filter;
+        row.classList.toggle('is-hidden', !show);
+        if (show) visible += 1;
+      });
+
+      if (workCount) workCount.textContent = `total ${visible}`;
+      if (preview) preview.classList.remove('on');
+    });
+  });
+
+  /* =========================================================
+     modal README · lightbox · toast
+     ========================================================= */
+
   const modal = $('#modal');
   const modalScroll = $('#modalScroll');
-  const modalCover = $('#modalCover');
+  const modalBar = $('#modalBar');
+  const modalMeta = $('#modalMeta');
   const modalTitle = $('#modalTitle');
-  const modalCat = $('#modalCat');
+  const modalSub = $('#modalSub');
   const modalDesc = $('#modalDesc');
-  const modalRole = $('#modalRole');
-  const modalYear = $('#modalYear');
-  const modalContext = $('#modalContext');
-  const modalStack = $('#modalStack');
-  const modalIndex = $('#modalIndex');
   const modalCount = $('#modalCount');
   const modalGallery = $('#modalGallery');
-  const modalNextName = $('#modalNextName');
   const modalNext = $('#modalNext');
-  const modalLinkRow = $('#modalLinkRow');
-  const modalLink = $('#modalLink');
+  const modalNextName = $('#modalNextName');
   const modalClose = $('#modalClose');
+  const lightbox = $('#lightbox');
+  const lightboxImg = $('#lightboxImg');
+  const lightboxCount = $('#lightboxCount');
 
-  let activeProjectId = null;
+  let activeProject = null;
+  let activeGallery = [];
+  let lightboxIndex = 0;
   let lastFocused = null;
 
-  const lockBody = (lock) => {
-    document.body.classList.toggle('is-locked', lock);
-    if (lock) {
-      const sw = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.paddingRight = sw > 0 ? `${sw}px` : '';
-    } else {
-      document.body.style.paddingRight = '';
-    }
+  const buildMeta = (project) => {
+    const rows = [
+      ['project', esc(project.title)],
+      ['category', esc(project.cat)],
+      ['year', esc(project.year)],
+      ['role', esc(project.role)],
+      ['context', esc(project.context)],
+      ['stack', project.stack.map((tech) => `<span class="tag">${esc(tech)}</span>`).join('')],
+      ['status', 'shipped · online']
+    ];
+    return rows.map(([key, value]) => `<dt>${key}</dt><dd>${value}</dd>`).join('');
+  };
+
+  const renderGallery = (project) => {
+    activeGallery = project.images.slice();
+
+    if (modalCount) modalCount.textContent = String(activeGallery.length);
+    if (!modalGallery) return;
+
+    modalGallery.innerHTML = activeGallery.map((image, index) => {
+      const number = String(index + 1).padStart(2, '0');
+      return `
+      <button class="gallery__item" type="button" data-index="${index}" aria-label="Ampliar ${number} · ${esc(image.label)}">
+        <img src="${image.src}" alt="${esc(image.label)}" loading="${index === 0 ? 'eager' : 'lazy'}" decoding="async">
+        <span>${number} · ${esc(image.label)}</span>
+      </button>
+    `;
+    }).join('');
   };
 
   const openProject = (id) => {
     const project = PROJECTS[id];
-    if (!project || !modal) return;
+    if (!project || !modal) return false;
 
+    activeProject = id;
     lastFocused = document.activeElement;
-    activeProjectId = id;
-    const idx = ORDER.indexOf(id);
 
-    modalIndex.textContent = `Proyecto ${pad(idx + 1)} / ${pad(ORDER.length)}`;
-    modalCover.src = IMG(project.cover);
-    modalCover.alt = `${project.title} — ${project.cat}`;
-    modalTitle.innerHTML = project.display;
-    modalCat.innerHTML = `${project.cat}<b>${project.year}</b>`;
-    modalDesc.innerHTML = project.desc.map((p) => `<p>${p}</p>`).join('');
-    modalRole.textContent = project.role;
-    modalYear.textContent = project.year;
-    modalContext.textContent = project.context;
-    modalStack.innerHTML = project.stack.map((s) => `<span>${s}</span>`).join('');
-    modalCount.textContent = String(project.images.length);
+    if (modalBar) modalBar.textContent = `${id}/README.md`;
+    if (modalMeta) modalMeta.innerHTML = buildMeta(project);
+    if (modalTitle) modalTitle.textContent = project.title;
+    if (modalSub) modalSub.textContent = `${project.cat} · ${project.year} · ${project.role}`;
 
-    if (project.link) {
-      modalLinkRow.hidden = false;
-      modalLink.href = project.link;
-    } else {
-      modalLinkRow.hidden = true;
-      modalLink.removeAttribute('href');
+    if (modalDesc) {
+      modalDesc.innerHTML = `
+        <p>${project.desc.join('</p><p>')}</p>
+        <h4>stack</h4>
+        <ul>${project.stack.map((tech) => `<li>${esc(tech)}</li>`).join('')}</ul>
+      `;
     }
 
-    modalGallery.innerHTML = project.images.map((im, i) => `
-      <figure data-index="${i}" tabindex="0" role="button" aria-label="Ampliar ${im.label}">
-        <img src="${im.src}" alt="${project.title} — ${im.label}" loading="lazy" width="1600" height="900" decoding="async">
-        <figcaption>${im.label}</figcaption>
-      </figure>
-    `).join('');
+    renderGallery(project);
 
-    const nextId = ORDER[(idx + 1) % ORDER.length];
+    const index = ORDER.indexOf(id);
+    const nextId = ORDER[(index + 1) % ORDER.length];
+    if (modalNext) modalNext.dataset.project = nextId;
     if (modalNextName) modalNextName.textContent = PROJECTS[nextId].title;
-    modalNext?.setAttribute('data-next', nextId);
 
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
-    lockBody(true);
+    document.body.classList.add('is-locked');
     if (modalScroll) modalScroll.scrollTop = 0;
-    window.setTimeout(() => modalClose?.focus({ preventScroll: true }), 120);
+    if (modalClose) modalClose.focus({ preventScroll: true });
+
+    return true;
   };
 
   const closeProject = () => {
-    if (!modal) return;
+    if (!modal || !modal.classList.contains('open')) return;
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
-    activeProjectId = null;
-    lockBody(false);
+    document.body.classList.remove('is-locked');
+    activeProject = null;
     if (lastFocused && typeof lastFocused.focus === 'function') {
       lastFocused.focus({ preventScroll: true });
     }
   };
 
-  $$('[data-project]').forEach((el) => {
-    el.addEventListener('click', () => openProject(el.dataset.project));
+  const renderLightbox = () => {
+    const image = activeGallery[lightboxIndex];
+    if (!image || !lightboxImg) return;
+    lightboxImg.src = image.src;
+    lightboxImg.alt = image.label;
+    if (lightboxCount) {
+      lightboxCount.textContent = `${lightboxIndex + 1} / ${activeGallery.length} · ${image.label}`;
+    }
+  };
+
+  const openLightbox = (index) => {
+    if (!lightbox || !activeGallery.length) return;
+    lightboxIndex = clamp(index, 0, activeGallery.length - 1);
+    renderLightbox();
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+  };
+
+  const closeLightbox = () => {
+    if (!lightbox) return;
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    if (modalClose) modalClose.focus({ preventScroll: true });
+  };
+
+  const stepLightbox = (delta) => {
+    if (!activeGallery.length) return;
+    lightboxIndex = (lightboxIndex + delta + activeGallery.length) % activeGallery.length;
+    renderLightbox();
+  };
+
+  workRows.forEach((row) => {
+    row.addEventListener('click', () => openProject(row.dataset.project));
   });
 
-  modalClose?.addEventListener('click', closeProject);
-  modal?.addEventListener('click', (e) => { if (e.target === modal) closeProject(); });
+  if (modalClose) modalClose.addEventListener('click', closeProject);
+  if (modal) {
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeProject();
+    });
+  }
+  if (modalNext) {
+    modalNext.addEventListener('click', () => {
+      const id = modalNext.dataset.project;
+      if (id) openProject(id);
+    });
+  }
+  if (modalGallery) {
+    modalGallery.addEventListener('click', (event) => {
+      const item = event.target.closest('.gallery__item');
+      if (!item) return;
+      openLightbox(Number(item.dataset.index) || 0);
+    });
+  }
 
-  modalNext?.addEventListener('click', () => {
-    const next = modalNext.dataset.next;
-    if (next) openProject(next);
-  });
-
-  modalGallery?.addEventListener('click', (e) => {
-    const fig = e.target.closest('figure');
-    if (!fig) return;
-    const project = PROJECTS[activeProjectId];
-    if (!project) return;
-    openLightbox(project.images.map((im) => ({ src: im.src, alt: `${project.title} — ${im.label}` })), Number(fig.dataset.index));
-  });
-
-  modalGallery?.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    const fig = e.target.closest('figure');
-    if (!fig) return;
-    e.preventDefault();
-    fig.click();
-  });
-
-  // focus trap inside modal
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Tab' || !modal?.classList.contains('open')) return;
-    const focusables = $$('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])', modal)
-      .filter((el) => el.offsetParent !== null);
-    if (!focusables.length) return;
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-  });
-
-  /* lightbox */
-  const lightbox = $('#lightbox');
-  const lightboxImg = $('#lightboxImg');
-  const lightboxCount = $('#lightboxCount');
   const lightboxClose = $('#lightboxClose');
   const lightboxPrev = $('#lightboxPrev');
   const lightboxNext = $('#lightboxNext');
-  let lightboxItems = [];
-  let lightboxIndex = 0;
 
-  function renderLightbox() {
-    if (!lightboxImg || !lightboxItems.length) return;
-    const item = lightboxItems[lightboxIndex];
-    lightboxImg.src = item.src;
-    lightboxImg.alt = item.alt;
-    if (lightboxCount) lightboxCount.textContent = `${lightboxIndex + 1} / ${lightboxItems.length}`;
+  if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+  if (lightboxPrev) lightboxPrev.addEventListener('click', () => stepLightbox(-1));
+  if (lightboxNext) lightboxNext.addEventListener('click', () => stepLightbox(1));
+  if (lightbox) {
+    lightbox.addEventListener('click', (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
   }
 
-  function openLightbox(items, index = 0) {
-    lightboxItems = items;
-    lightboxIndex = clamp(index, 0, items.length - 1);
-    renderLightbox();
-    lightbox?.classList.add('open');
-    lightbox?.setAttribute('aria-hidden', 'false');
-    lockBody(true);
-    lightboxClose?.focus({ preventScroll: true });
-  }
-
-  function closeLightbox() {
-    lightbox?.classList.remove('open');
-    lightbox?.setAttribute('aria-hidden', 'true');
-    if (!modal?.classList.contains('open')) lockBody(false);
-  }
-
-  const stepLightbox = (dir) => {
-    if (!lightboxItems.length) return;
-    lightboxIndex = (lightboxIndex + dir + lightboxItems.length) % lightboxItems.length;
-    renderLightbox();
-  };
-
-  lightboxClose?.addEventListener('click', closeLightbox);
-  lightboxPrev?.addEventListener('click', () => stepLightbox(-1));
-  lightboxNext?.addEventListener('click', () => stepLightbox(1));
-  lightbox?.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-
-  document.addEventListener('keydown', (e) => {
-    if (lightbox?.classList.contains('open')) {
-      if (e.key === 'Escape') closeLightbox();
-      else if (e.key === 'ArrowLeft') stepLightbox(-1);
-      else if (e.key === 'ArrowRight') stepLightbox(1);
-      return;
-    }
-    if (e.key === 'Escape' && modal?.classList.contains('open')) closeProject();
-  });
-
-  /* =========================================================
-     copy + toast
-     ========================================================= */
   const toast = $('#toast');
   let toastTimer = 0;
-  const showToast = (msg) => {
+
+  const showToast = (message) => {
     if (!toast) return;
-    toast.textContent = msg;
+    toast.textContent = message;
     toast.classList.add('on');
-    clearTimeout(toastTimer);
+    window.clearTimeout(toastTimer);
     toastTimer = window.setTimeout(() => toast.classList.remove('on'), 2200);
   };
 
-  $$('[data-copy]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const value = btn.dataset.copy;
-      try {
-        await navigator.clipboard.writeText(value);
-        showToast('Copiado al portapapeles');
-      } catch {
-        showToast('No se pudo copiar');
-      }
-    });
-  });
-
-  /* =========================================================
-     cursor + magnetic
-     ========================================================= */
-  if (finePointer && !reduceMotion) {
-    document.body.classList.add('has-cursor');
-    const cursor = $('#cursor');
-    const cursorLabel = $('#cursorLabel');
-    const dot = $('.cursor__dot', cursor || document);
-    const ring = $('.cursor__ring', cursor || document);
-
-    let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
-    let rx = tx, ry = ty;
-
-    const moveCursor = (e) => {
-      tx = e.clientX;
-      ty = e.clientY;
-      if (dot) dot.style.translate = `${tx}px ${ty}px`;
-    };
-
-    const cursorLoop = () => {
-      rx += (tx - rx) * 0.18;
-      ry += (ty - ry) * 0.18;
-      if (ring) ring.style.translate = `${rx}px ${ry}px`;
-      requestAnimationFrame(cursorLoop);
-    };
-    requestAnimationFrame(cursorLoop);
-    window.addEventListener('pointermove', moveCursor, { passive: true });
-
-    document.addEventListener('pointerover', (e) => {
-      const target = e.target.closest('a, button, [data-cursor], input, textarea, [role="button"]');
-      if (!target) {
-        cursor?.classList.remove('is-hover', 'has-label');
-        return;
-      }
-      cursor?.classList.add('is-hover');
-      const label = target.dataset.cursor;
-      if (label && cursorLabel) {
-        cursorLabel.textContent = label;
-        cursor?.classList.add('has-label');
-      } else {
-        cursor?.classList.remove('has-label');
-      }
-    });
-
-    document.addEventListener('pointerleave', () => {
-      if (cursor) cursor.style.opacity = '0';
-    });
-    document.addEventListener('pointerenter', () => {
-      if (cursor) cursor.style.opacity = '1';
-    });
-
-    $$('.magnetic').forEach((el) => {
-      el.addEventListener('pointermove', (e) => {
-        const r = el.getBoundingClientRect();
-        const mx = e.clientX - r.left - r.width / 2;
-        const my = e.clientY - r.top - r.height / 2;
-        el.style.translate = `${(mx * 0.16).toFixed(1)}px ${(my * 0.2).toFixed(1)}px`;
-      });
-      el.addEventListener('pointerleave', () => { el.style.translate = '0px 0px'; });
-    });
-  }
-
-  /* =========================================================
-     sound
-     ========================================================= */
-  let audioCtx = null;
-  let soundOn = store.get('maru:sound', 'on') !== 'off';
-  const soundToggle = $('#soundToggle');
-  const soundLabel = $('#soundLabel');
-
-  const refreshSoundUi = () => {
-    if (!soundToggle || !soundLabel) return;
-    soundToggle.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
-    soundLabel.textContent = soundOn ? 'Sonido on' : 'Sonido off';
-  };
-  refreshSoundUi();
-
-  soundToggle?.addEventListener('click', () => {
-    soundOn = !soundOn;
-    store.set('maru:sound', soundOn ? 'on' : 'off');
-    refreshSoundUi();
-    if (soundOn) sfx(620, 0.07, 'sine', 0.03);
-  });
-
-  function sfx(freq = 440, duration = 0.08, type = 'sine', volume = 0.035) {
-    if (!soundOn) return;
+  const copyText = async (text) => {
     try {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      audioCtx ||= new Ctx();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(volume, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration + 0.02);
-    } catch { /* no audio, no pasa nada */ }
-  }
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
+      }
+      showToast(`copiado: ${text}`);
+    } catch {
+      showToast('no se pudo copiar');
+    }
+  };
+
+  $$('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', () => copyText(btn.dataset.copy));
+  });
 
   /* =========================================================
-     mini-game · snake
+     snake.sh
      ========================================================= */
+
   const snakeCanvas = $('#snakeCanvas');
-  if (snakeCanvas) {
+  const snakeScoreEl = $('#snakeScore');
+  const snakeHighEl = $('#snakeHigh');
+  const snakeStateEl = $('#snakeState');
+  const snakeOverlay = $('#snakeOverlay');
+  const snakeTitle = $('#snakeTitle');
+  const snakeText = $('#snakeText');
+  const snakeStartBtn = $('#snakeStart');
+
+  const SNAKE_KEY = 'maru.snake.high';
+
+  const snake = {
+    ctx: null,
+    cols: 24,
+    rows: 15,
+    cell: 20,
+    body: [],
+    dir: { x: 1, y: 0 },
+    queue: [],
+    food: { x: 0, y: 0 },
+    score: 0,
+    high: Number(store.get(SNAKE_KEY, 0)) || 0,
+    state: 'ready',
+    step: 130,
+    acc: 0,
+    last: 0,
+    raf: 0
+  };
+
+  const setupSnakeCanvas = () => {
+    if (!snakeCanvas) return null;
     const ctx = snakeCanvas.getContext('2d');
-    const W = 480, H = 300, COLS = 24, ROWS = 15, CELL = 20;
+    if (!ctx) return null;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    snakeCanvas.width = W * dpr;
-    snakeCanvas.height = H * dpr;
-    snakeCanvas.style.aspectRatio = `${W} / ${H}`;
-    ctx.scale(dpr, dpr);
+    snakeCanvas.width = 480 * dpr;
+    snakeCanvas.height = 300 * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return ctx;
+  };
 
-    const overlay = $('#snakeOverlay');
-    const startBtn = $('#snakeStart');
-    const scoreEl = $('#snakeScore');
-    const highEl = $('#snakeHigh');
-    const overlayTitle = overlay?.querySelector('h4');
-    const overlayText = overlay?.querySelector('p');
-    const gameCard = $('#snakeGame');
+  const snakeHud = () => {
+    if (snakeScoreEl) snakeScoreEl.textContent = String(snake.score);
+    if (snakeHighEl) snakeHighEl.textContent = String(snake.high);
+    if (snakeStateEl) snakeStateEl.textContent = snake.state;
+  };
 
-    let high = Number(store.get('maru:snake:high', 0)) || 0;
-    let body = [];
-    let dir = { x: 1, y: 0 };
-    let queuedDir = { x: 1, y: 0 };
-    let food = { x: 16, y: 7 };
-    let score = 0;
-    let state = 'idle';
-    let lastTime = 0;
-    let acc = 0;
-    let raf = 0;
-    let tickMs = 120;
+  const placeFood = () => {
+    const free = [];
+    for (let y = 0; y < snake.rows; y += 1) {
+      for (let x = 0; x < snake.cols; x += 1) {
+        if (!snake.body.some((part) => part.x === x && part.y === y)) free.push({ x, y });
+      }
+    }
+    snake.food = free.length ? free[Math.floor(Math.random() * free.length)] : { x: 0, y: 0 };
+  };
 
-    if (highEl) highEl.textContent = String(high);
+  const drawSnake = () => {
+    const ctx = snake.ctx;
+    if (!ctx) return;
 
-    const roundRect = (x, y, w, h, r) => {
+    ctx.fillStyle = '#040404';
+    ctx.fillRect(0, 0, 480, 300);
+
+    ctx.strokeStyle = 'rgba(255,255,255,.05)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= 480; x += snake.cell) {
       ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
-      else {
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + w, y, x + w, y + h, r);
-        ctx.arcTo(x + w, y + h, x, y + h, r);
-        ctx.arcTo(x, y + h, x, y, r);
-        ctx.arcTo(x, y, x + w, y, r);
-        ctx.closePath();
-      }
-    };
-
-    const spawnFood = () => {
-      for (let i = 0; i < 400; i++) {
-        const p = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
-        if (!body.some((s) => s.x === p.x && s.y === p.y)) return p;
-      }
-      return { x: 1, y: 1 };
-    };
-
-    const reset = () => {
-      body = [{ x: 8, y: 7 }, { x: 7, y: 7 }, { x: 6, y: 7 }];
-      dir = { x: 1, y: 0 };
-      queuedDir = { x: 1, y: 0 };
-      score = 0;
-      tickMs = 120;
-      acc = 0;
-      food = spawnFood();
-      if (scoreEl) scoreEl.textContent = '0';
-      draw();
-    };
-
-    const draw = () => {
-      ctx.fillStyle = '#070708';
-      ctx.fillRect(0, 0, W, H);
-
-      // grid dots
-      ctx.fillStyle = 'rgba(242,240,234,.055)';
-      for (let y = 0; y < ROWS; y++) {
-        for (let x = 0; x < COLS; x++) {
-          ctx.fillRect(x * CELL + CELL / 2, y * CELL + CELL / 2, 1, 1);
-        }
-      }
-
-      // food
-      const pulse = 1 + Math.sin(performance.now() / 240) * 0.12;
-      ctx.save();
-      ctx.shadowColor = 'rgba(216,255,62,.55)';
-      ctx.shadowBlur = 14;
-      ctx.fillStyle = '#d8ff3e';
+      ctx.moveTo(x + 0.5, 0);
+      ctx.lineTo(x + 0.5, 300);
+      ctx.stroke();
+    }
+    for (let y = 0; y <= 300; y += snake.cell) {
       ctx.beginPath();
-      ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, 4.4 * pulse, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      // snake body
-      body.forEach((seg, i) => {
-        const isHead = i === 0;
-        const x = seg.x * CELL;
-        const y = seg.y * CELL;
-        ctx.fillStyle = isHead ? '#d8ff3e' : i < 3 ? 'rgba(242,240,234,.92)' : 'rgba(242,240,234,.58)';
-        roundRect(x + 2, y + 2, CELL - 4, CELL - 4, isHead ? 6 : 4);
-        ctx.fill();
-
-        if (isHead) {
-          ctx.fillStyle = 'rgba(8,8,10,.85)';
-          const ex = dir.x !== 0 ? (dir.x > 0 ? 12 : 6) : 8;
-          const ey = dir.y !== 0 ? (dir.y > 0 ? 12 : 6) : 8;
-          ctx.fillRect(x + ex, y + ey, 2, 2);
-          ctx.fillRect(x + (dir.x !== 0 ? ex : 12), y + (dir.y !== 0 ? ey : 12), 2, 2);
-        }
-      });
-
-      if (state === 'paused') {
-        ctx.fillStyle = 'rgba(7,7,8,.55)';
-        ctx.fillRect(0, 0, W, H);
-        ctx.fillStyle = '#d8ff3e';
-        ctx.font = '500 11px "JetBrains Mono", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('— PAUSA —', W / 2, H / 2 + 4);
-      }
-    };
-
-    const showOverlay = (title, text, button) => {
-      if (overlayTitle) overlayTitle.innerHTML = title;
-      if (overlayText) overlayText.textContent = text;
-      if (startBtn) startBtn.textContent = button;
-      overlay?.classList.remove('hide');
-    };
-
-    const hideOverlay = () => overlay?.classList.add('hide');
-
-    const gameOver = () => {
-      state = 'over';
-      cancelAnimationFrame(raf);
-      sfx(130, 0.22, 'sawtooth', 0.05);
-      if (score > high) {
-        high = score;
-        store.set('maru:snake:high', String(high));
-        if (highEl) highEl.textContent = String(high);
-      }
-      draw();
-      showOverlay(
-        `<em>Game over</em> ${score} punto${score === 1 ? '' : 's'}`,
-        score >= high && score > 0 ? '¡Nuevo récord! Reintenta y súbelo.' : `Tu récord sigue en ${high}. Otra vez.`,
-        'Reintentar'
-      );
-    };
-
-    const step = () => {
-      dir = queuedDir;
-      const head = { x: body[0].x + dir.x, y: body[0].y + dir.y };
-
-      if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) { gameOver(); return; }
-      if (body.some((s) => s.x === head.x && s.y === head.y)) { gameOver(); return; }
-
-      body.unshift(head);
-
-      if (head.x === food.x && head.y === food.y) {
-        score++;
-        if (scoreEl) scoreEl.textContent = String(score);
-        food = spawnFood();
-        tickMs = Math.max(68, 120 - Math.floor(score / 3) * 6);
-        sfx(560 + Math.min(score, 12) * 28, 0.06, 'square', 0.03);
-      } else {
-        body.pop();
-      }
-    };
-
-    const loop = (now) => {
-      if (state !== 'running') return;
-      raf = requestAnimationFrame(loop);
-      if (!lastTime) lastTime = now;
-      acc += now - lastTime;
-      lastTime = now;
-
-      if (acc >= tickMs) {
-        acc = 0;
-        step();
-      }
-      draw();
-    };
-
-    const start = () => {
-      if (state === 'paused') {
-        state = 'running';
-        lastTime = 0;
-        acc = 0;
-        hideOverlay();
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(loop);
-        return;
-      }
-      reset();
-      state = 'running';
-      lastTime = 0;
-      hideOverlay();
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(loop);
-    };
-
-    const pause = () => {
-      if (state !== 'running') return;
-      state = 'paused';
-      cancelAnimationFrame(raf);
-      draw();
-      showOverlay('<em>Pausa</em> Respira', 'El tablero te espera. Pulsa continuar o la barra espaciadora.', 'Continuar');
-    };
-
-    startBtn?.addEventListener('click', start);
-
-    const setDirection = (next) => {
-      if (state !== 'running') return;
-      if (next.x === -dir.x && next.y === -dir.y) return;
-      if (next.x === dir.x && next.y === dir.y) return;
-      queuedDir = next;
-    };
-
-    const keyDirs = {
-      arrowup: { x: 0, y: -1 }, w: { x: 0, y: -1 },
-      arrowdown: { x: 0, y: 1 }, s: { x: 0, y: 1 },
-      arrowleft: { x: -1, y: 0 }, a: { x: -1, y: 0 },
-      arrowright: { x: 1, y: 0 }, d: { x: 1, y: 0 }
-    };
-
-    document.addEventListener('keydown', (e) => {
-      if (state !== 'running' && state !== 'paused') return;
-      const key = e.key.toLowerCase();
-
-      if (key === ' ') {
-        e.preventDefault();
-        if (state === 'running') pause();
-        else start();
-        return;
-      }
-
-      const next = keyDirs[key];
-      if (!next || state !== 'running') return;
-      e.preventDefault();
-      setDirection(next);
-    });
-
-    $$('#snakePad button').forEach((btn) => {
-      const dirs = {
-        up: { x: 0, y: -1 }, down: { x: 0, y: 1 },
-        left: { x: -1, y: 0 }, right: { x: 1, y: 0 }
-      };
-      btn.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        setDirection(dirs[btn.dataset.dir]);
-      });
-    });
-
-    if ('IntersectionObserver' in window && gameCard) {
-      const gameObs = new IntersectionObserver((entries) => {
-        if (!entries[0]?.isIntersecting && state === 'running') pause();
-      }, { threshold: 0.1 });
-      gameObs.observe(gameCard);
+      ctx.moveTo(0, y + 0.5);
+      ctx.lineTo(480, y + 0.5);
+      ctx.stroke();
     }
 
-    reset();
+    const fx = snake.food.x * snake.cell;
+    const fy = snake.food.y * snake.cell;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(fx + 5, fy + 5, snake.cell - 10, snake.cell - 10);
+    ctx.strokeStyle = 'rgba(255,255,255,.4)';
+    ctx.strokeRect(fx + 2.5, fy + 2.5, snake.cell - 5, snake.cell - 5);
+
+    snake.body.forEach((part, index) => {
+      const px = part.x * snake.cell;
+      const py = part.y * snake.cell;
+      const head = index === 0;
+
+      ctx.fillStyle = head ? '#ffffff' : '#c9c9c9';
+      ctx.fillRect(px + 2, py + 2, snake.cell - 4, snake.cell - 4);
+
+      if (!head) {
+        ctx.fillStyle = 'rgba(0,0,0,.2)';
+        ctx.fillRect(px + 2, py + 2, snake.cell - 4, 2);
+      }
+    });
+  };
+
+  const showSnakeOverlay = (title, text, action) => {
+    if (snakeTitle) snakeTitle.textContent = title;
+    if (snakeText) snakeText.textContent = text;
+    if (snakeStartBtn) snakeStartBtn.textContent = action || '[ start ]';
+    if (snakeOverlay) snakeOverlay.classList.remove('hide');
+  };
+
+  const hideSnakeOverlay = () => {
+    if (snakeOverlay) snakeOverlay.classList.add('hide');
+  };
+
+  const snakeReset = () => {
+    snake.body = [
+      { x: 12, y: 7 },
+      { x: 11, y: 7 },
+      { x: 10, y: 7 },
+      { x: 9, y: 7 }
+    ];
+    snake.dir = { x: 1, y: 0 };
+    snake.queue = [];
+    snake.score = 0;
+    snake.step = 130;
+    snake.acc = 0;
+    placeFood();
+    snakeHud();
+    drawSnake();
+  };
+
+  const snakeTurn = (x, y) => {
+    if (snake.state !== 'playing') return;
+    if (snake.queue.length >= 2) return;
+    const last = snake.queue.length ? snake.queue[snake.queue.length - 1] : snake.dir;
+    if (last.x === -x && last.y === -y) return;
+    if (last.x === x && last.y === y) return;
+    snake.queue.push({ x, y });
+  };
+
+  const snakeGameOver = () => {
+    snake.state = 'over';
+    if (snake.score > snake.high) {
+      snake.high = snake.score;
+      store.set(SNAKE_KEY, snake.high);
+    }
+    snakeHud();
+    showSnakeOverlay('game over', `Puntuación ${snake.score} · récord ${snake.high}`, '[ retry ]');
+    drawSnake();
+  };
+
+  const snakeTick = () => {
+    if (snake.queue.length) {
+      snake.dir = snake.queue.shift();
+    }
+
+    const head = snake.body[0];
+    const next = { x: head.x + snake.dir.x, y: head.y + snake.dir.y };
+
+    if (next.x < 0 || next.y < 0 || next.x >= snake.cols || next.y >= snake.rows) {
+      snakeGameOver();
+      return;
+    }
+
+    const eats = next.x === snake.food.x && next.y === snake.food.y;
+    const body = eats ? snake.body : snake.body.slice(0, -1);
+
+    if (body.some((part) => part.x === next.x && part.y === next.y)) {
+      snakeGameOver();
+      return;
+    }
+
+    snake.body.unshift(next);
+
+    if (eats) {
+      snake.score += 10;
+      if (snake.step > 78) snake.step -= 2;
+      placeFood();
+    } else {
+      snake.body.pop();
+    }
+
+    snakeHud();
+  };
+
+  const snakeLoop = (now) => {
+    if (snake.state !== 'playing') {
+      snake.raf = 0;
+      return;
+    }
+
+    if (!snake.last) snake.last = now;
+    const delta = Math.min(120, now - snake.last);
+    snake.last = now;
+    snake.acc += delta;
+
+    if (snake.acc >= snake.step) {
+      snake.acc = 0;
+      snakeTick();
+    }
+
+    drawSnake();
+    snake.raf = requestAnimationFrame(snakeLoop);
+  };
+
+  const snakeStart = () => {
+    if (!snake.ctx) return;
+    snakeReset();
+    snake.state = 'playing';
+    snake.last = 0;
+    hideSnakeOverlay();
+    snakeHud();
+    if (!snake.raf) snake.raf = requestAnimationFrame(snakeLoop);
+  };
+
+  const snakePause = () => {
+    if (snake.state === 'playing') {
+      snake.state = 'paused';
+      snakeHud();
+      showSnakeOverlay('paused', 'Pulsa space o el botón para continuar.', '[ resume ]');
+    } else if (snake.state === 'paused') {
+      snake.state = 'playing';
+      snake.last = 0;
+      hideSnakeOverlay();
+      snakeHud();
+      if (!snake.raf) snake.raf = requestAnimationFrame(snakeLoop);
+    }
+  };
+
+  if (snakeCanvas) {
+    snake.ctx = setupSnakeCanvas();
+    if (snake.ctx) {
+      snakeReset();
+      if (snakeHighEl) snakeHighEl.textContent = String(snake.high);
+    }
   }
 
+  if (snakeStartBtn) {
+    snakeStartBtn.addEventListener('click', () => {
+      if (snake.state === 'paused') snakePause();
+      else snakeStart();
+    });
+  }
+
+  $$('#snakePad [data-dir]').forEach((btn) => {
+    btn.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      const map = {
+        up: [0, -1],
+        down: [0, 1],
+        left: [-1, 0],
+        right: [1, 0]
+      };
+      const dir = map[btn.dataset.dir];
+      if (dir) snakeTurn(dir[0], dir[1]);
+    });
+  });
+
+  const snakeInView = () => {
+    if (!snakeCanvas) return false;
+    const rect = snakeCanvas.getBoundingClientRect();
+    return rect.bottom > 0 && rect.top < window.innerHeight;
+  };
+
   /* =========================================================
-     mini-game · memory sequence
+     memory.sh
      ========================================================= */
+
   const memoryGrid = $('#memoryGrid');
+  const memoryScoreEl = $('#memoryScore');
+  const memoryHighEl = $('#memoryHigh');
+  const memoryPhaseEl = $('#memoryPhase');
+  const memoryOverlay = $('#memoryOverlay');
+  const memoryTitle = $('#memoryTitle');
+  const memoryText = $('#memoryText');
+  const memoryStartBtn = $('#memoryStart');
+  const memoryStatus = $('#memoryStatus');
+
+  const MEMORY_KEY = 'maru.memory.high';
+
+  const memory = {
+    seq: [],
+    input: [],
+    level: 0,
+    high: Number(store.get(MEMORY_KEY, 0)) || 0,
+    phase: 'ready',
+    timers: [],
+    cells: []
+  };
+
+  const memoryHud = () => {
+    if (memoryScoreEl) memoryScoreEl.textContent = String(memory.level);
+    if (memoryHighEl) memoryHighEl.textContent = String(memory.high);
+    if (memoryPhaseEl) memoryPhaseEl.textContent = memory.phase;
+
+    if (memoryStatus) {
+      const labels = {
+        ready: 'pulsa start',
+        watch: 'observa la secuencia',
+        input: 'repite la secuencia',
+        between: 'bien · siguiente nivel',
+        over: 'has fallado'
+      };
+      memoryStatus.textContent = labels[memory.phase] || 'pulsa start';
+    }
+  };
+
+  const clearMemoryTimers = () => {
+    memory.timers.forEach((id) => window.clearTimeout(id));
+    memory.timers = [];
+  };
+
+  const memoryLater = (fn, ms) => {
+    const id = window.setTimeout(fn, ms);
+    memory.timers.push(id);
+    return id;
+  };
+
+  const setMemoryEnabled = (on) => {
+    memory.cells.forEach((cell) => { cell.disabled = !on; });
+  };
+
+  const flashCell = (index, ms = 380) => {
+    const cell = memory.cells[index];
+    if (!cell) return;
+    cell.classList.add('lit');
+    memoryLater(() => cell.classList.remove('lit'), ms);
+  };
+
+  const memorySequence = () => {
+    memory.phase = 'watch';
+    memory.input = [];
+    memoryHud();
+    clearMemoryTimers();
+    setMemoryEnabled(false);
+    memory.cells.forEach((cell) => cell.classList.remove('lit', 'bad'));
+
+    memory.seq.forEach((index, step) => {
+      memoryLater(() => flashCell(index, 380), 500 + step * 620);
+    });
+
+    memoryLater(() => {
+      memory.phase = 'input';
+      setMemoryEnabled(true);
+      memoryHud();
+    }, 500 + memory.seq.length * 620);
+  };
+
+  const memoryNextLevel = () => {
+    memory.level += 1;
+    if (memory.level > memory.high) {
+      memory.high = memory.level;
+      store.set(MEMORY_KEY, memory.high);
+    }
+    memory.seq.push(Math.floor(Math.random() * 9));
+    memoryHud();
+    memorySequence();
+  };
+
+  const memoryFail = () => {
+    memory.phase = 'over';
+    clearMemoryTimers();
+    setMemoryEnabled(false);
+
+    memory.cells.forEach((cell) => cell.classList.remove('lit'));
+    const wrong = memory.cells[memory.input[memory.input.length - 1]];
+    if (wrong) wrong.classList.add('bad');
+
+    memoryHud();
+
+    if (memoryTitle) memoryTitle.textContent = 'has fallado';
+    if (memoryText) memoryText.textContent = `Llegaste al nivel ${memory.level} · récord ${memory.high}`;
+    if (memoryStartBtn) memoryStartBtn.textContent = '[ retry ]';
+    if (memoryOverlay) memoryOverlay.classList.remove('hide');
+  };
+
+  const memoryPress = (index) => {
+    if (memory.phase !== 'input') return;
+    const cell = memory.cells[index];
+    if (cell) {
+      cell.classList.add('lit');
+      memoryLater(() => cell.classList.remove('lit'), 150);
+    }
+
+    memory.input.push(index);
+    const step = memory.input.length - 1;
+
+    if (memory.seq[step] !== index) {
+      memoryFail();
+      return;
+    }
+
+    if (memory.input.length === memory.seq.length) {
+      memory.phase = 'between';
+      setMemoryEnabled(false);
+      memoryHud();
+      memoryLater(memoryNextLevel, 720);
+    }
+  };
+
+  const memoryStart = () => {
+    clearMemoryTimers();
+    memory.seq = [];
+    memory.input = [];
+    memory.level = 0;
+    memory.phase = 'ready';
+    memory.cells.forEach((cell) => cell.classList.remove('lit', 'bad'));
+    if (memoryOverlay) memoryOverlay.classList.add('hide');
+    memoryHud();
+    if (memoryStartBtn) memoryStartBtn.textContent = '[ start ]';
+    memoryNextLevel();
+  };
+
   if (memoryGrid) {
-    const glyphs = ['◆', '▲', '●', '■', '✕', '≈', '✦', '≡', '⬡'];
-    const cells = [];
-    const overlay = $('#memoryOverlay');
-    const startBtn = $('#memoryStart');
-    const scoreEl = $('#memoryScore');
-    const highEl = $('#memoryHigh');
-    const statusEl = $('#memoryStatus');
-    const phaseEl = $('#memoryPhase');
-    const overlayTitle = overlay?.querySelector('h4');
-    const overlayText = overlay?.querySelector('p');
+    for (let i = 0; i < 9; i += 1) {
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'memory__cell';
+      cell.dataset.index = String(i);
+      cell.textContent = String(i + 1).padStart(2, '0');
+      cell.disabled = true;
+      cell.setAttribute('aria-label', `Casilla ${String(i + 1).padStart(2, '0')}`);
+      memoryGrid.appendChild(cell);
+      memory.cells.push(cell);
+    }
 
-    let high = Number(store.get('maru:memory:high', 0)) || 0;
-    let sequence = [];
-    let inputIndex = 0;
-    let level = 0;
-    let phase = 'idle';
-    let token = 0;
-    let ignoreClicks = false;
-
-    if (highEl) highEl.textContent = String(high);
-
-    glyphs.forEach((glyph, i) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'memory__cell';
-      btn.dataset.i = String(i);
-      btn.textContent = glyph;
-      btn.setAttribute('aria-label', `Casilla ${i + 1}`);
-      btn.addEventListener('click', () => handleCell(i));
-      memoryGrid.appendChild(btn);
-      cells.push(btn);
+    memoryGrid.addEventListener('click', (event) => {
+      const cell = event.target.closest('.memory__cell');
+      if (!cell || cell.disabled) return;
+      memoryPress(Number(cell.dataset.index));
     });
 
-    const setStatus = (a, b) => {
-      if (statusEl) statusEl.textContent = a;
-      if (phaseEl) phaseEl.textContent = b;
-    };
+    memoryHud();
+  }
 
-    const flash = (index, on) => {
-      const cell = cells[index];
-      if (!cell) return;
-      cell.classList.toggle('lit', on);
-      if (on) sfx(240 + index * 45, 0.09, 'sine', 0.035);
-    };
+  if (memoryStartBtn) memoryStartBtn.addEventListener('click', memoryStart);
 
-    const wait = (ms, t) => new Promise((resolve) => {
-      window.setTimeout(() => resolve(t === token), ms);
-    });
+  /* =========================================================
+     atajos globales
+     ========================================================= */
 
-    const showOverlay = (title, text, button) => {
-      if (overlayTitle) overlayTitle.innerHTML = title;
-      if (overlayText) overlayText.textContent = text;
-      if (startBtn) startBtn.textContent = button;
-      overlay?.classList.remove('hide');
-    };
-
-    const hideOverlay = () => overlay?.classList.add('hide');
-
-    const playSequence = async (t) => {
-      setStatus('Observa…', 'Secuencia');
-      if (phaseEl) phaseEl.textContent = 'Observa';
-      await wait(480, t);
-      for (const index of sequence) {
-        if (t !== token) return;
-        flash(index, true);
-        await wait(380, t);
-        if (t !== token) return;
-        flash(index, false);
-        await wait(150, t);
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      if (lightbox && lightbox.classList.contains('open')) {
+        closeLightbox();
+        return;
       }
-      if (t !== token) return;
-      inputIndex = 0;
-      phase = 'input';
-      setStatus('Tu turno', 'Repite');
-      if (phaseEl) phaseEl.textContent = 'Tu turno';
-    };
-
-    const nextLevel = async (t) => {
-      if (t !== token) return;
-      level++;
-      if (scoreEl) scoreEl.textContent = String(level);
-      const next = Math.floor(Math.random() * glyphs.length);
-      sequence.push(next);
-      phase = 'playback';
-      ignoreClicks = true;
-      await playSequence(t);
-      ignoreClicks = false;
-    };
-
-    const fail = () => {
-      token++;
-      phase = 'over';
-      ignoreClicks = true;
-      sfx(110, 0.25, 'sawtooth', 0.05);
-      if (level > high) {
-        high = level;
-        store.set('maru:memory:high', String(high));
-        if (highEl) highEl.textContent = String(high);
+      if (modal && modal.classList.contains('open')) {
+        closeProject();
+        return;
       }
-      setStatus('Secuencia rota', 'Game over');
-      showOverlay(
-        `<em>Game over</em> Nivel ${level}`,
-        level >= high && level > 0 ? '¡Tu mejor marca! La memoria también se entrena.' : `Tu récord es ${high}. Otra ronda.`,
-        'Reintentar'
-      );
-    };
+      if (menu && menu.classList.contains('open')) {
+        setMenu(false);
+        return;
+      }
+    }
 
-    const handleCell = (index) => {
-      if (phase !== 'input' || ignoreClicks) return;
-      const expected = sequence[inputIndex];
-      flash(index, true);
-      window.setTimeout(() => flash(index, false), 140);
+    const tag = (event.target && event.target.tagName ? event.target.tagName : '').toLowerCase();
+    const typing = tag === 'input' || tag === 'textarea' || tag === 'select'
+      || (event.target && event.target.isContentEditable);
 
-      if (index !== expected) {
-        const cell = cells[index];
-        if (cell) {
-          cell.classList.add('bad');
-          window.setTimeout(() => cell.classList.remove('bad'), 380);
-        }
-        fail();
+    if (typing) return;
+
+    if (lightbox && lightbox.classList.contains('open')) {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        stepLightbox(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        stepLightbox(1);
+      }
+      return;
+    }
+
+    if (modal && modal.classList.contains('open')) {
+      if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && activeProject) {
+        event.preventDefault();
+        const index = ORDER.indexOf(activeProject);
+        const delta = event.key === 'ArrowRight' ? 1 : -1;
+        openProject(ORDER[(index + delta + ORDER.length) % ORDER.length]);
+      }
+      return;
+    }
+
+    if (snakeInView() && (snake.state === 'playing' || snake.state === 'paused')) {
+      const key = event.key.toLowerCase();
+
+      if (key === ' ' || event.code === 'Space') {
+        event.preventDefault();
+        snakePause();
         return;
       }
 
-      inputIndex++;
-      if (inputIndex === sequence.length) {
-        phase = 'wait';
-        ignoreClicks = true;
-        setStatus('Correcto', 'Siguiente…');
-        const t = token;
-        window.setTimeout(() => {
-          if (t !== token) return;
-          ignoreClicks = false;
-          nextLevel(t);
-        }, 620);
+      if (key === 'arrowup' || key === 'w') {
+        event.preventDefault();
+        snakeTurn(0, -1);
+        return;
       }
-    };
-
-    const startGame = () => {
-      token++;
-      const t = token;
-      sequence = [];
-      inputIndex = 0;
-      level = 0;
-      phase = 'playback';
-      ignoreClicks = true;
-      if (scoreEl) scoreEl.textContent = '0';
-      hideOverlay();
-      cells.forEach((c) => c.classList.remove('lit', 'bad'));
-      nextLevel(t);
-    };
-
-    startBtn?.addEventListener('click', startGame);
-
-    setStatus('Pulsa empezar', 'Listo');
-    if (phaseEl) phaseEl.textContent = 'Listo';
-  }
-
-  /* =========================================================
-     services spotlight
-     ========================================================= */
-  if (finePointer) {
-    $$('.service').forEach((card) => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-        card.style.setProperty('--my', `${e.clientY - r.top}px`);
-      });
-    });
-  }
-
-  /* =========================================================
-     keyboard / misc
-     ========================================================= */
-  // prevent orphaned scroll lock
-  window.addEventListener('pageshow', () => {
-    if (!modal?.classList.contains('open') && !lightbox?.classList.contains('open') && !menu?.classList.contains('open')) {
-      document.body.classList.remove('is-locked');
+      if (key === 'arrowdown' || key === 's') {
+        event.preventDefault();
+        snakeTurn(0, 1);
+        return;
+      }
+      if (key === 'arrowleft' || key === 'a') {
+        event.preventDefault();
+        snakeTurn(-1, 0);
+        return;
+      }
+      if (key === 'arrowright' || key === 'd') {
+        event.preventDefault();
+        snakeTurn(1, 0);
+      }
     }
   });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && snake.state === 'playing') snakePause();
+  });
+
+  /* =========================================================
+     init
+     ========================================================= */
+
+  const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (typeof reduceQuery.addEventListener === 'function') {
+    reduceQuery.addEventListener('change', (event) => {
+      if (event.matches) {
+        revealTargets.forEach((el) => el.classList.add('in'));
+      }
+    });
+  }
+
+  const heroSection = $('#hero');
+  if (heroSection) heroSection.dataset.ready = 'true';
 })();
