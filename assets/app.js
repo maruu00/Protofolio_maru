@@ -157,6 +157,25 @@
       ])
     },
 
+    dguard: {
+      title: 'dguard',
+      cat: 'API Security · Anti-DDoS',
+      year: '2026',
+      role: 'Diseño & desarrollo backend',
+      context: 'Protección de la API de Nexumo',
+      desc: [
+        'Capa de defensa para la API de Nexumo. Cada IP tiene un token bucket con dos umbrales: 40 peticiones por minuto en endpoints caros (pagos, contacto, reseñas) y 150 en el resto. Cuando se agota, el cliente recibe un proof-of-work; si falla cinco veces, la IP se bloquea temporalmente.',
+        'Se suma a la validación HMAC de tokens, la comprobación de importes en servidor, el bloqueo de path traversal y las alertas de seguridad. El objetivo no era frenar bots a base de capturas, sino que <b>una persona real nunca note la barrera</b>.'
+      ],
+      stack: ['Node.js', 'Express', 'Vercel', 'HMAC', 'Rate limiting', 'PoW'],
+      cover: 'dguard-output',
+      status: 'en producción',
+      images: images([
+        ['dguard-output', 'Test real · rate limit + PoW + ban'],
+        ['dguard-code', 'dguard · token bucket']
+      ])
+    },
+
     fivemkit: {
       title: 'FiveM Essentials',
       cat: 'FiveM · Scripts & UI',
@@ -921,6 +940,8 @@
 
     if (modalCount) modalCount.textContent = String(activeGallery.length);
     if (!modalGallery) return;
+
+    modalGallery.className = activeGallery.length === 2 ? 'md__gallery md__gallery--pair' : 'md__gallery';
 
     modalGallery.innerHTML = activeGallery.map((image, index) => {
       const number = String(index + 1).padStart(2, '0');

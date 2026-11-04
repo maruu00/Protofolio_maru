@@ -822,6 +822,8 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
   margin-bottom:12px;
 }
 .md__gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.md__gallery--pair{grid-template-columns:1fr}
+.md__gallery--pair .gallery__item:first-child{grid-column:auto}
 .gallery__item{
   position:relative;overflow:hidden;border:1px solid var(--line-2);
   background:#0a0a0a;text-align:left;
