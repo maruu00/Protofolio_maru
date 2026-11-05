@@ -1253,7 +1253,7 @@
     { at: 2240, text: '1', cls: 'big' },
     { at: 2580, text: 'ignition', cls: 'ok', action: 'ignite' },
     { at: 3220, text: 'liftoff' },
-    { at: 4600, text: 'orbit reached · señal desbloqueada', cls: 'ok', action: 'unlock' }
+    { at: 5100, text: 'orbit reached · señal desbloqueada', cls: 'ok', action: 'unlock' }
   ];
 
   const runLaunch = () => {

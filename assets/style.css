@@ -1056,6 +1056,8 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
   animation:flame .16s steps(2) infinite alternate;
 }
 .launchpad.is-done .launchpad__orbit{animation:orbitPulse 2.4s ease-out infinite}
+.launchpad.is-done .launchpad__craft{animation:orbitDrift 7s ease-in-out infinite}
+.launchpad.is-done .launchpad__flame{height:0;opacity:0;animation:none}
 .launchpad__console{
   display:flex;flex-direction:column;gap:14px;min-width:0;
   padding:clamp(16px,2.6vw,26px);
@@ -1075,7 +1077,12 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
 @keyframes liftoff{
   0%{transform:translateY(0) scale(1);opacity:1}
   18%{transform:translateY(10px) scale(1.04)}
-  100%{transform:translateY(-420px) scale(.55);opacity:0}
+  70%{transform:translateY(-150px) scale(.62);opacity:1}
+  100%{transform:translateY(-240px) scale(.5);opacity:.9}
+}
+@keyframes orbitDrift{
+  0%,100%{transform:translateY(-240px) scale(.5);opacity:.85}
+  50%{transform:translateY(-252px) scale(.54);opacity:1}
 }
 @keyframes flame{
   from{transform:scaleX(.75) scaleY(.9)}
@@ -1160,6 +1167,9 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
 .statusbar__lock.on{color:var(--ink)}
 
 .nav a.nav__secret{border-style:dashed;border-color:var(--line-2);color:var(--gray)}
+.nav a.nav__secret.active{
+  background:var(--ink);border-style:solid;border-color:var(--ink);color:#050505;
+}
 .nav__secret[hidden]{display:none}
 
 /* =========================================================
@@ -1257,6 +1267,7 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
   .hero::before,.launchpad__stars,.launchpad.is-done .launchpad__orbit{animation:none}
   .traveler__svg,.traveler.is-moving .leg--a,.traveler.is-moving .leg--b{animation:none}
   .launchpad.is-launching .launchpad__craft,.launchpad.is-launching .launchpad__flame{animation:none}
+  .launchpad.is-done .launchpad__craft{animation:none}
   .commit.in::after{animation:none}
   .ascii{animation:none;clip-path:none}
   .work-list.in .work-row{animation:none}
