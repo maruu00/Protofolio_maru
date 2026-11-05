@@ -894,6 +894,275 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
 .toast.on{opacity:1;transform:none}
 
 /* =========================================================
+   viajero · personaje que recorre la web
+   ========================================================= */
+
+.traveler{
+  position:fixed;top:50%;right:max(20px,calc((100vw - var(--shell)) / 2 - 52px));
+  z-index:8600;width:96px;height:min(46vh,400px);
+  transform:translateY(-50%);
+  pointer-events:none;display:none;
+}
+@media(min-width:1180px){
+  .traveler{display:block}
+}
+@media(max-width:1399px){
+  .traveler__label{display:none}
+}
+.traveler__rail{
+  position:absolute;top:0;right:0;bottom:0;width:1px;
+  background:var(--line);
+  display:flex;flex-direction:column;justify-content:space-between;align-items:center;
+}
+.traveler__rail i{
+  display:block;width:5px;height:1px;background:#3a3a3a;
+  transition:width .25s var(--ease),background .25s;
+}
+.traveler__rail i.on{width:13px;background:var(--ink)}
+.traveler__rail i.is-secret{background:#262626}
+.traveler__fill{
+  position:absolute;top:0;left:0;width:1px;height:100%;
+  background:linear-gradient(180deg,var(--gray),var(--ink));
+  transform:scaleY(0);transform-origin:0 0;
+}
+.traveler__ship{
+  position:absolute;top:0;right:0;
+  display:flex;align-items:center;gap:8px;
+  color:var(--ink);will-change:transform;
+}
+.traveler__label{
+  font-size:9px;letter-spacing:.06em;color:var(--faint);
+  white-space:nowrap;text-shadow:0 0 6px #050505;
+}
+.traveler__svg{
+  filter:drop-shadow(0 0 7px rgba(255,255,255,.22));
+  animation:bob 3.4s ease-in-out infinite;
+}
+.traveler__visor{fill:#050505}
+.traveler__legs .leg{transform-box:fill-box;transform-origin:center top}
+.traveler.is-moving .leg--a{animation:legA .28s steps(2) infinite}
+.traveler.is-moving .leg--b{animation:legB .28s steps(2) infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes legA{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
+@keyframes legB{0%,100%{transform:translateY(2px)}50%{transform:translateY(0)}}
+
+/* =========================================================
+   signal · sección secreta
+   ========================================================= */
+
+.signal{
+  border-top-color:var(--line-2);
+  background:radial-gradient(70% 50% at 78% 0%,rgba(255,255,255,.035),transparent 70%);
+}
+.signal__grid{
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:clamp(24px,4vw,56px);align-items:start;
+}
+.signal .h2{max-width:18ch;margin-bottom:18px}
+.signal__meta{
+  display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:20px;
+  font-size:9.5px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase;
+}
+.signal__meta b{color:var(--gray);font-weight:400}
+.signal__actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.signal__card .win__bar{justify-content:space-between}
+.signal__ascii{
+  margin:0;padding:26px 20px;text-align:center;
+  font-family:var(--font);font-size:10px;line-height:1.15;color:var(--ink);
+  white-space:pre;overflow-x:auto;
+  border-bottom:1px solid var(--line);
+  background:radial-gradient(90% 80% at 50% 100%,#161616,#060606 70%);
+}
+.signal__log{padding:16px 18px;display:grid;gap:8px;font-size:10px;line-height:1.6;color:var(--dim)}
+.signal__log p{display:grid;grid-template-columns:22px 1fr;gap:8px}
+.signal__log span{color:var(--faint)}
+
+/* =========================================================
+   launchpad · cohete
+   ========================================================= */
+
+.launchpad{
+  position:fixed;inset:0;z-index:9260;
+  display:flex;align-items:center;justify-content:center;
+  padding:clamp(10px,3vw,28px);
+  background:rgba(2,2,2,.9);backdrop-filter:blur(10px);
+  opacity:0;visibility:hidden;
+  transition:opacity .25s,visibility .25s;
+}
+.launchpad.open{opacity:1;visibility:visible}
+.launchpad__panel{
+  width:100%;max-width:940px;
+  transform:translateY(14px);
+  transition:transform .3s var(--ease);
+}
+.launchpad.open .launchpad__panel{transform:none}
+.launchpad__body{
+  display:grid;grid-template-columns:1.05fr .95fr;
+  min-height:min(58vh,440px);
+}
+.launchpad__scene{
+  position:relative;overflow:hidden;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:24px;
+  border-right:1px solid var(--line);
+  background:radial-gradient(120% 90% at 50% 105%,#1b1b1b 0%,#080808 55%,#040404 100%);
+}
+.launchpad__scene::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.45;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(70% 60% at 50% 50%,#000,transparent 80%);
+  mask-image:radial-gradient(70% 60% at 50% 50%,#000,transparent 80%);
+}
+.launchpad__stars{
+  position:absolute;inset:-40%;z-index:0;opacity:.55;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.7),transparent 60%),
+    radial-gradient(1px 1px at 70% 60%,rgba(255,255,255,.5),transparent 60%),
+    radial-gradient(1px 1px at 45% 80%,rgba(255,255,255,.35),transparent 60%);
+  background-size:180px 180px,260px 260px,220px 220px;
+  animation:starsDrift 26s linear infinite;
+}
+.launchpad__orbit{
+  position:absolute;left:50%;bottom:-46%;z-index:0;
+  width:130%;aspect-ratio:1;transform:translateX(-50%);
+  border-radius:50%;border:1px solid rgba(255,255,255,.12);
+  box-shadow:inset 0 0 80px rgba(255,255,255,.05);
+  pointer-events:none;
+}
+.launchpad__craft{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  margin-bottom:10px;
+}
+.launchpad__rocket{
+  margin:0;font-family:var(--font);font-size:11px;line-height:1.1;
+  color:var(--ink);white-space:pre;
+  text-shadow:0 0 14px rgba(255,255,255,.18);
+}
+.launchpad__flame{
+  width:16px;height:0;margin-top:2px;opacity:0;
+  background:linear-gradient(180deg,#fff 0%,#9a9a9a 45%,#3a3a3a 75%,transparent 100%);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  transition:opacity .2s,height .2s;
+}
+.launchpad.is-launching .launchpad__craft{
+  animation:liftoff 2.4s cubic-bezier(.4,0,.8,.4) forwards;
+}
+.launchpad.is-launching .launchpad__flame{
+  height:54px;opacity:1;
+  animation:flame .16s steps(2) infinite alternate;
+}
+.launchpad.is-done .launchpad__orbit{animation:orbitPulse 2.4s ease-out infinite}
+.launchpad__console{
+  display:flex;flex-direction:column;gap:14px;min-width:0;
+  padding:clamp(16px,2.6vw,26px);
+}
+.launchpad__log{flex:1;font-size:11px;line-height:1.95;color:var(--gray);overflow:hidden}
+.launchpad__log > div{white-space:pre-wrap}
+.launchpad__log .dim{color:var(--faint)}
+.launchpad__log .ok{color:var(--white)}
+.launchpad__log .big{font-size:26px;letter-spacing:.22em;line-height:1.3;color:var(--white)}
+.launchpad__foot{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-top:1px solid var(--line);padding-top:12px;
+  font-size:9.5px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;
+}
+.launchpad__foot .btn{text-transform:none;letter-spacing:.04em}
+#launchStatus{min-width:0;overflow:hidden;text-overflow:ellipsis}
+@keyframes liftoff{
+  0%{transform:translateY(0) scale(1);opacity:1}
+  18%{transform:translateY(10px) scale(1.04)}
+  100%{transform:translateY(-420px) scale(.55);opacity:0}
+}
+@keyframes flame{
+  from{transform:scaleX(.75) scaleY(.9)}
+  to{transform:scaleX(1.15) scaleY(1.1)}
+}
+@keyframes orbitPulse{0%,100%{opacity:.4}50%{opacity:.9}}
+@keyframes starsDrift{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-40px,60px,0)}
+}
+
+/* =========================================================
+   detalles nuevos · hero, bloqueo, hl
+   ========================================================= */
+
+.hero{position:relative;overflow:hidden;isolation:isolate}
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    radial-gradient(1px 1px at 22% 32%,rgba(255,255,255,.65),transparent 60%),
+    radial-gradient(1px 1px at 68% 58%,rgba(255,255,255,.45),transparent 60%),
+    radial-gradient(1px 1px at 42% 82%,rgba(255,255,255,.3),transparent 60%);
+  background-size:190px 190px,270px 270px,230px 230px;
+  animation:starsDrift 38s linear infinite alternate;
+  -webkit-mask-image:radial-gradient(70% 70% at 50% 50%,#000 20%,transparent 85%);
+  mask-image:radial-gradient(70% 70% at 50% 50%,#000 20%,transparent 85%);
+}
+.hero > *{position:relative;z-index:1}
+
+.ascii{animation:asciiIn 1.05s steps(14) .15s both}
+@keyframes asciiIn{
+  from{clip-path:inset(0 100% 0 0)}
+  to{clip-path:inset(0 0 0 0)}
+}
+
+.hl{transition:background .2s,color .2s}
+.hl:hover{background:var(--white)}
+
+.work-list.in .work-row{animation:rowIn .4s var(--ease) both}
+.work-list.in .work-row:nth-child(2){animation-delay:.04s}
+.work-list.in .work-row:nth-child(3){animation-delay:.08s}
+.work-list.in .work-row:nth-child(4){animation-delay:.12s}
+.work-list.in .work-row:nth-child(5){animation-delay:.16s}
+.work-list.in .work-row:nth-child(6){animation-delay:.2s}
+.work-list.in .work-row:nth-child(7){animation-delay:.24s}
+.work-list.in .work-row:nth-child(8){animation-delay:.28s}
+.work-list.in .work-row:nth-child(9){animation-delay:.32s}
+@keyframes rowIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:none}
+}
+
+.commit.in::after{animation:nodeIn .4s var(--ease) both;animation-delay:var(--d,0ms)}
+@keyframes nodeIn{
+  from{transform:scale(.2);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+.btn:active{transform:translateY(1px)}
+
+.shell__lock{
+  display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+  margin-top:12px;font-size:10px;color:var(--faint);letter-spacing:.03em;
+}
+.shell__lock-tag{
+  background:var(--line-2);color:var(--dim);padding:1px 6px;
+  font-size:9px;letter-spacing:.1em;
+  transition:background .2s,color .2s;
+}
+.shell__lock button{
+  color:var(--gray);padding:0 0 1px;border-bottom:1px solid var(--line-2);
+  transition:color .15s,border-color .15s;
+}
+.shell__lock button:hover{color:var(--ink);border-color:var(--ink)}
+.shell__lock b{color:var(--gray);font-weight:400}
+.shell__lock.is-open .shell__lock-tag{background:var(--ink);color:#050505}
+.shell__lock:not(.is-open) .shell__lock-tag{animation:lockPulse 3.2s steps(1) infinite}
+@keyframes lockPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.shell__quick .shell__quick-launch{border-style:dashed;border-color:var(--line-2);color:var(--gray)}
+
+.statusbar__lock{color:var(--faint);letter-spacing:.1em;transition:color .2s}
+.statusbar__lock.on{color:var(--ink)}
+
+.nav a.nav__secret{border-style:dashed;border-color:var(--line-2);color:var(--gray)}
+.nav__secret[hidden]{display:none}
+
+/* =========================================================
    responsive
    ========================================================= */
 
@@ -921,6 +1190,10 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
   .service:last-child{border-bottom:0}
   .modal__gallery{grid-template-columns:1fr}
   .gallery__item:first-child{grid-column:span 1}
+  .signal__grid{grid-template-columns:1fr}
+  .launchpad__body{grid-template-columns:1fr;min-height:0}
+  .launchpad__scene{min-height:220px;border-right:0;border-bottom:1px solid var(--line)}
+  .launchpad__log{min-height:170px}
 }
 
 @media(max-width:620px){
@@ -955,6 +1228,13 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
   .keys{display:none}
   .game__foot{justify-content:center}
   .lightbox__nav{top:auto;bottom:14px;transform:none}
+  .shell__lock{font-size:9px}
+  .launchpad{padding:0}
+  .launchpad__panel{max-height:100svh;border-radius:0;border-inline:0}
+  .launchpad__scene{min-height:180px;padding:16px}
+  .launchpad__rocket{font-size:9px}
+  .launchpad__log .big{font-size:22px}
+  .signal__ascii{font-size:9px}
 }
 
 /* =========================================================
@@ -974,4 +1254,11 @@ section[id]{scroll-margin-top:calc(var(--top) + 8px)}
   .cursor,.shell__caret{animation:none}
   .dot{animation:none}
   .scanlines{display:none}
+  .hero::before,.launchpad__stars,.launchpad.is-done .launchpad__orbit{animation:none}
+  .traveler__svg,.traveler.is-moving .leg--a,.traveler.is-moving .leg--b{animation:none}
+  .launchpad.is-launching .launchpad__craft,.launchpad.is-launching .launchpad__flame{animation:none}
+  .commit.in::after{animation:none}
+  .ascii{animation:none;clip-path:none}
+  .work-list.in .work-row{animation:none}
+  .shell__lock:not(.is-open) .shell__lock-tag{animation:none}
 }

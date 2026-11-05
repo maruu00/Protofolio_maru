@@ -15,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="img/web/tienda_online_1-thumb.webp">
 <link rel="preload" as="image" href="img/web/proyecto_tienda_peluqueria-thumb.webp">
-<link rel="stylesheet" href="assets/style.css?v=8">
+<link rel="stylesheet" href="assets/style.css?v=9">
 <noscript><style>.type{clip-path:none!important}.preview{display:none}</style></noscript>
 </head>
 <body>
@@ -40,6 +40,7 @@
     <a href="#path" data-scroll="path">path</a>
     <a href="#services" data-scroll="services">services</a>
     <a href="#contact" data-scroll="contact">contact</a>
+    <a href="#signal" data-scroll="signal" class="nav__secret" hidden>signal</a>
   </nav>
 
   <div class="topbar__right">
@@ -67,6 +68,7 @@
         <a href="#path" data-scroll="path"><small>04</small> ~/path</a>
         <a href="#services" data-scroll="services"><small>05</small> ~/services</a>
         <a href="#contact" data-scroll="contact"><small>06</small> ~/contact</a>
+        <a href="#signal" data-scroll="signal" class="nav__secret" hidden><small>07</small> ~/signal</a>
       </nav>
       <p class="menu__hint">[esc] cerrar</p>
     </div>
@@ -102,7 +104,7 @@
 ██║ ╚═╝ ██║██║  ██║██║  ██║╚██████╔╝
 ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ </pre>
 
-        <p class="hero__role">fullstack developer <span class="dim">·</span> Madrid, ES</p>
+        <p class="hero__role">fullstack developer <span class="dim">·</span> Barcelona, ES</p>
 
         <p class="hero__bio">
           Construyo interfaces y sistemas que se sienten vivos.
@@ -134,7 +136,13 @@
             <button type="button" data-cmd="ls">ls</button>
             <button type="button" data-cmd="neofetch">neofetch</button>
             <button type="button" data-cmd="contact">contact</button>
+            <button type="button" data-cmd="launch" class="shell__quick-launch">launch</button>
           </div>
+
+          <p class="shell__lock" id="shellLock">
+            <span class="shell__lock-tag">[locked]</span>
+            ejecuta <button type="button" data-launch>launch</button> para desbloquear <b>~/signal</b>
+          </p>
         </div>
       </div>
     </div>
@@ -613,6 +621,68 @@
     </div>
   </section>
 
+  <!-- ================= signal (se desbloquea con launch) ================= -->
+  <section class="section signal" id="signal" hidden>
+    <div class="shell-wrap">
+      <div class="sec-head" data-reveal>
+        <span class="num">[07]</span>
+        <span class="prompt"><b>maru</b>@portfolio:~$</span>
+        <span class="type">cat ~/.signal</span>
+      </div>
+
+      <div class="signal__grid">
+        <div>
+          <h2 class="h2" data-reveal>Señal <span class="hl">recibida</span>.</h2>
+          <p class="prose" data-reveal>
+            Has ejecutado el protocolo. Esta sección no está en el menú y no existe hasta que
+            despegas, que es exactamente el tipo de detalle que me gusta construir.
+          </p>
+          <p class="prose" data-reveal style="--d:80ms">
+            Si has llegado hasta aquí ya sabes cómo trabajo: <b>mirando debajo del capó</b>.
+            Sin frameworks, sin ruido y con animaciones que no le piden permiso al rendimiento.
+          </p>
+
+          <div class="signal__meta" data-reveal style="--d:140ms">
+            <span>orbit <b>41.3874, 2.1686</b></span>
+            <span>source <b>barcelona, es</b></span>
+            <span>status <b>unlocked</b></span>
+          </div>
+
+          <div class="signal__actions" data-reveal style="--d:200ms">
+            <button class="btn" type="button" data-launch>[ replay launch ]</button>
+            <button class="btn" type="button" data-scroll="contact">[ contact ]</button>
+          </div>
+        </div>
+
+        <div class="win signal__card" data-reveal style="--d:120ms">
+          <div class="win__bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="win__title">signal.log</span>
+            <span class="win__meta">rx · 001</span>
+          </div>
+
+          <pre class="signal__ascii" aria-hidden="true">        /\
+       /  \
+      /    \
+     |      |
+     |      |
+     |      |
+    /|      |\
+   / |      | \
+  /__|______|__\
+        ||
+       /__\</pre>
+
+          <div class="signal__log">
+            <p><span>01</span> transmisión recibida desde barcelona</p>
+            <p><span>02</span> latencia 0 ms · sin paquetes perdidos</p>
+            <p><span>03</span> “el detalle es el diseño”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="footer">
@@ -622,6 +692,7 @@
     <div class="footer__links">
       <a href="https://github.com/marruuu-u990" target="_blank" rel="noopener">github</a>
       <a href="https://discord.com/users/1037473407756935218" target="_blank" rel="noopener">discord</a>
+      <button id="launchBtn" type="button" data-launch>[ launch ]</button>
       <button id="toTop" type="button">[ ↑ top ]</button>
     </div>
   </div>
@@ -631,10 +702,44 @@
 <div class="statusbar" aria-hidden="true">
   <span class="statusbar__mode">NORMAL</span>
   <span class="statusbar__mid">~/portfolio — <b id="statusPath">hero</b></span>
+  <span class="statusbar__lock" id="statusLock">[ locked ]</span>
   <span class="statusbar__right">
     <span class="statusbar__bar"><i id="statusBar"></i></span>
     <span id="statusPct">000</span>%
   </span>
+</div>
+
+<!-- mini personaje que recorre la web -->
+<div class="traveler" id="traveler" aria-hidden="true">
+  <div class="traveler__rail" id="travelerRail">
+    <span class="traveler__fill" id="travelerFill"></span>
+    <i data-id="hero"></i>
+    <i data-id="about"></i>
+    <i data-id="work"></i>
+    <i data-id="play"></i>
+    <i data-id="path"></i>
+    <i data-id="services"></i>
+    <i data-id="contact"></i>
+    <i data-id="signal" class="is-secret"></i>
+  </div>
+
+  <div class="traveler__ship" id="travelerShip">
+    <span class="traveler__label" id="travelerLabel">~/hero</span>
+    <svg class="traveler__svg" viewBox="0 0 18 24" width="21" height="28" focusable="false">
+      <g fill="currentColor">
+        <rect x="7" y="0" width="4" height="2"/>
+        <rect x="4" y="2" width="10" height="8"/>
+        <rect x="3" y="10" width="12" height="6"/>
+        <rect x="1" y="11" width="2" height="4"/>
+        <rect x="15" y="11" width="2" height="4"/>
+      </g>
+      <rect class="traveler__visor" x="5.5" y="4.5" width="7" height="3" rx=".5"/>
+      <g class="traveler__legs" fill="currentColor">
+        <rect class="leg leg--a" x="4.5" y="16" width="3.5" height="5"/>
+        <rect class="leg leg--b" x="10" y="16" width="3.5" height="5"/>
+      </g>
+    </svg>
+  </div>
 </div>
 
 <!-- preview flotante -->
@@ -696,7 +801,48 @@
 
 <div class="toast" id="toast" role="status"></div>
 
-<script src="assets/app.js?v=8" defer></script>
+<!-- launchpad · se abre con el comando launch -->
+<div class="launchpad" id="launchpad" role="dialog" aria-modal="true" aria-labelledby="launchTitle" aria-hidden="true">
+  <div class="launchpad__panel win">
+    <div class="win__bar">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="win__title" id="launchTitle">launch.sh — preflight</span>
+      <span class="win__meta">tty1</span>
+      <button class="win__btn" id="launchClose" type="button" aria-label="Cerrar launch [x]">[x]</button>
+    </div>
+
+    <div class="launchpad__body">
+      <div class="launchpad__scene" id="launchScene" aria-hidden="true">
+        <span class="launchpad__stars"></span>
+        <span class="launchpad__orbit"></span>
+        <div class="launchpad__craft">
+          <pre class="launchpad__rocket">      /\
+     /  \
+    /    \
+   |      |
+   |      |
+   |      |
+  /|      |\
+ / |      | \
+/__|______|__\
+      ||
+     /__\</pre>
+          <span class="launchpad__flame"></span>
+        </div>
+      </div>
+
+      <div class="launchpad__console">
+        <div class="launchpad__log" id="launchLog" role="log" aria-live="polite"></div>
+        <div class="launchpad__foot">
+          <span id="launchStatus">standby</span>
+          <button class="btn" id="launchGo" type="button" disabled>[ ... ]</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/app.js?v=9" defer></script>
 </body>
 </html>
 

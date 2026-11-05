@@ -300,22 +300,32 @@
   const statusPath = $('#statusPath');
   const navLinks = $$('.nav a[data-scroll]');
   const watchSections = $$('main > section[id]');
+  const traveler = $('#traveler');
+  const travelerRail = $('#travelerRail');
+  const travelerShip = $('#travelerShip');
+  const travelerFill = $('#travelerFill');
+  const travelerLabel = $('#travelerLabel');
+  const travelerTicks = $$('.traveler__rail i');
 
   let scrollQueued = false;
+  let travelerMoveTimer = 0;
 
   const syncActiveSection = () => {
-    if (!watchSections.length) return;
+    const visibleSections = watchSections.filter((section) => !section.hidden);
+    if (!visibleSections.length) return;
     const marker = window.innerHeight * 0.38;
-    let current = watchSections[0].id;
+    let current = visibleSections[0].id;
 
-    watchSections.forEach((section) => {
+    visibleSections.forEach((section) => {
       if (section.getBoundingClientRect().top <= marker) current = section.id;
     });
 
     const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-    if (atBottom) current = watchSections[watchSections.length - 1].id;
+    if (atBottom) current = visibleSections[visibleSections.length - 1].id;
 
     if (statusPath) statusPath.textContent = current;
+    if (travelerLabel) travelerLabel.textContent = `~/${current}`;
+    travelerTicks.forEach((tick) => tick.classList.toggle('on', tick.dataset.id === current));
 
     navLinks.forEach((link) => {
       const on = link.getAttribute('data-scroll') === current;
@@ -334,6 +344,17 @@
     if (progressBar) progressBar.style.transform = `scaleX(${ratio})`;
     if (statusFill) statusFill.style.width = `${(ratio * 100).toFixed(1)}%`;
     if (statusPct) statusPct.textContent = String(Math.round(ratio * 100)).padStart(3, '0');
+
+    if (travelerShip && travelerRail) {
+      const travel = Math.max(0, travelerRail.clientHeight - 26);
+      travelerShip.style.transform = `translateY(${(ratio * travel).toFixed(1)}px)`;
+    }
+    if (travelerFill) travelerFill.style.transform = `scaleY(${ratio.toFixed(4)})`;
+    if (traveler) {
+      traveler.classList.add('is-moving');
+      window.clearTimeout(travelerMoveTimer);
+      travelerMoveTimer = window.setTimeout(() => traveler.classList.remove('is-moving'), 220);
+    }
 
     syncActiveSection();
   };
@@ -446,7 +467,7 @@
   const sectionsList = ['about', 'work', 'play', 'path', 'services', 'contact'];
   const commandNames = [
     'help', 'ls', 'open', 'cat', 'whoami', 'neofetch', 'contact', 'socials',
-    'cd', 'clear', 'date', 'pwd', 'echo', 'sudo', 'theme', 'banner', 'exit'
+    'cd', 'clear', 'date', 'pwd', 'echo', 'sudo', 'theme', 'banner', 'launch', 'signal', 'exit'
   ];
 
   const projectNames = ORDER;
@@ -460,6 +481,7 @@
       ['whoami', 'quién soy'],
       ['neofetch', 'ficha del sistema'],
       ['contact', 'cómo contactarme'],
+      ['launch', 'despega y desbloquea ~/signal'],
       ['cd <sección>', 'navega por la página'],
       ['date · pwd · echo', 'lo obvio'],
       ['clear', 'limpia la terminal'],
@@ -506,7 +528,7 @@
         return;
       }
       if (file === 'about.md' || file === 'about') {
-        printLine('maru — fullstack developer · Madrid, ES');
+        printLine('maru — fullstack developer · Barcelona, ES');
         printLine('Interfaces y sistemas que se sienten vivos: FiveM, web, bots de Discord');
         printLine('y experimentos interactivos. HTML, CSS, JavaScript y Lua, con Node.js');
         printLine('cuando el proyecto pide backend.');
@@ -527,6 +549,16 @@
         printLine('response < 24 h');
         return;
       }
+      if (file === 'signal.txt' || file === 'signal') {
+        if (!unlocked) {
+          printLine('cat: signal.txt: permiso denegado', 'err');
+          printLine('pista: ejecuta "./launch.sh" para desbloquearlo');
+          return;
+        }
+        printLine('señal recibida · orbit 41.3874, 2.1686', 'ok');
+        printLine('barcelona, es · latencia 0 ms · sin paquetes perdidos');
+        return;
+      }
       if (PROJECTS[file]) {
         printLine(`abriendo ${file}/README.md ...`, 'ok');
         openProject(file);
@@ -537,7 +569,7 @@
 
     whoami() {
       printLine('maru', 'ok');
-      printLine('fullstack developer · Madrid, ES');
+      printLine('fullstack developer · Barcelona, ES');
       printLine('fivem · web · discord bots · interfaces');
     },
 
@@ -558,7 +590,7 @@
         'Shell ...... zsh 5.9',
         'Uptime ..... 4 years',
         'Stack ...... html css js lua node',
-        'Location ... Madrid, ES'
+        'Location ... Barcelona, ES'
       ];
       const lines = [];
       for (let i = 0; i < Math.max(logo.length, info.length); i += 1) {
@@ -619,6 +651,21 @@
     sudo() {
       printLine('[sudo] password for maru: ********');
       printLine('maru is not in the sudoers file. This incident will be reported.', 'err');
+    },
+
+    launch() {
+      printLine('iniciando protocolo de despegue ...', 'ok');
+      runLaunch();
+    },
+
+    signal() {
+      if (!unlocked) {
+        printLine('signal: acceso restringido', 'err');
+        printLine('ejecuta "launch" para desbloquear ~/signal');
+        return;
+      }
+      printLine('abriendo ~/signal ...', 'ok');
+      scrollToId('signal');
     },
 
     theme(args) {
@@ -682,7 +729,7 @@
     if (!line) return;
 
     const [name, ...args] = line.split(/\s+/);
-    const key = name.toLowerCase();
+    const key = name.toLowerCase().replace(/^\.\//, '').replace(/\.sh$/, '');
     const handler = COMMANDS[key];
 
     if (handler) {
@@ -1104,6 +1151,198 @@
   $$('[data-copy]').forEach((btn) => {
     btn.addEventListener('click', () => copyText(btn.dataset.copy));
   });
+
+  /* =========================================================
+     launch.sh · cohete · desbloqueo de ~/signal
+     ========================================================= */
+
+  const UNLOCK_KEY = 'maru.signal';
+  const launchpad = $('#launchpad');
+  const launchLog = $('#launchLog');
+  const launchScene = $('#launchScene');
+  const launchStatus = $('#launchStatus');
+  const launchGo = $('#launchGo');
+  const launchClose = $('#launchClose');
+  const signalSection = $('#signal');
+  const shellLock = $('#shellLock');
+  const statusLock = $('#statusLock');
+  const statusMode = $('.statusbar__mode');
+  const launchTitle = $('#launchTitle');
+  const secretLinks = $$('.nav__secret');
+  const launchButtons = $$('[data-launch]');
+
+  let unlocked = store.get(UNLOCK_KEY, '') === '1';
+  let launching = false;
+  let launchTimers = [];
+  let launchFocus = null;
+
+  const launchLater = (fn, ms) => {
+    const id = window.setTimeout(fn, ms);
+    launchTimers.push(id);
+    return id;
+  };
+
+  const clearLaunchTimers = () => {
+    launchTimers.forEach((id) => window.clearTimeout(id));
+    launchTimers = [];
+  };
+
+  const applyUnlock = (announce = false) => {
+    unlocked = true;
+    store.set(UNLOCK_KEY, '1');
+
+    if (signalSection) signalSection.hidden = false;
+    secretLinks.forEach((link) => { link.hidden = false; });
+    document.body.classList.add('is-unlocked');
+
+    if (statusLock) {
+      statusLock.textContent = '[ unlocked ]';
+      statusLock.classList.add('on');
+    }
+    if (statusMode) statusMode.textContent = 'ORBIT';
+
+    if (shellLock) {
+      shellLock.classList.add('is-open');
+      shellLock.innerHTML = '<span class="shell__lock-tag">[unlocked]</span> señal disponible en <button type="button">~/signal</button>';
+      const jump = shellLock.querySelector('button');
+      if (jump) jump.addEventListener('click', () => scrollToId('signal'));
+    }
+
+    if (launchGo) {
+      launchGo.disabled = false;
+      launchGo.textContent = '[ ir a la señal → ]';
+      launchGo.dataset.mode = 'signal';
+    }
+
+    if (announce) showToast('señal desbloqueada · ~/signal');
+    renderScroll();
+  };
+
+  const openLaunchpad = () => {
+    if (!launchpad) return;
+    launchFocus = document.activeElement;
+    launchpad.classList.add('open');
+    launchpad.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('is-locked');
+    if (launchClose) launchClose.focus({ preventScroll: true });
+  };
+
+  const closeLaunchpad = () => {
+    if (!launchpad || !launchpad.classList.contains('open')) return;
+    clearLaunchTimers();
+    launching = false;
+    launchpad.classList.remove('open', 'is-launching', 'is-done');
+    launchpad.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('is-locked');
+    if (launchScene) launchScene.classList.remove('is-launching', 'is-done');
+    if (launchStatus) launchStatus.textContent = 'standby';
+    if (launchTitle) launchTitle.textContent = 'launch.sh — preflight';
+    if (statusMode) statusMode.textContent = unlocked ? 'ORBIT' : 'NORMAL';
+    if (launchFocus && typeof launchFocus.focus === 'function') {
+      launchFocus.focus({ preventScroll: true });
+    }
+  };
+
+  const LAUNCH_STEPS = [
+    { at: 0, text: '$ ./launch.sh --target portfolio', cls: 'dim' },
+    { at: 420, text: '› preflight .......... ok' },
+    { at: 800, text: '› fuel ............... 100%' },
+    { at: 1180, text: '› telemetry .......... linked' },
+    { at: 1520, text: '3', cls: 'big' },
+    { at: 1880, text: '2', cls: 'big' },
+    { at: 2240, text: '1', cls: 'big' },
+    { at: 2580, text: 'ignition', cls: 'ok', action: 'ignite' },
+    { at: 3220, text: 'liftoff' },
+    { at: 4600, text: 'orbit reached · señal desbloqueada', cls: 'ok', action: 'unlock' }
+  ];
+
+  const runLaunch = () => {
+    if (!launchpad) {
+      applyUnlock(true);
+      return;
+    }
+    if (launching) return;
+
+    launching = true;
+    clearLaunchTimers();
+
+    const speed = reduceMotion ? 0.35 : 1;
+
+    if (launchLog) launchLog.innerHTML = '';
+    if (launchpad) launchpad.classList.remove('is-done');
+    if (launchScene) launchScene.classList.remove('is-launching', 'is-done');
+    if (launchStatus) launchStatus.textContent = 'preflight';
+    if (launchTitle) launchTitle.textContent = 'launch.sh — preflight';
+    if (statusMode) statusMode.textContent = 'LAUNCH';
+    if (launchGo) {
+      launchGo.disabled = true;
+      launchGo.textContent = '[ ... ]';
+    }
+
+    openLaunchpad();
+
+    LAUNCH_STEPS.forEach((step) => {
+      launchLater(() => {
+        if (!launchLog) return;
+
+        const line = document.createElement('div');
+        line.textContent = step.text;
+        if (step.cls) line.className = step.cls;
+
+        if (step.cls === 'big') {
+          const previous = launchLog.querySelector('.is-count');
+          if (previous) previous.remove();
+          line.classList.add('is-count');
+        }
+
+        launchLog.appendChild(line);
+        launchLog.scrollTop = launchLog.scrollHeight;
+
+        if (step.action === 'ignite') {
+          launchpad.classList.add('is-launching');
+          if (launchScene) launchScene.classList.add('is-launching');
+          if (launchStatus) launchStatus.textContent = 'liftoff';
+        }
+
+        if (step.action === 'unlock') {
+          launching = false;
+          applyUnlock(true);
+          launchpad.classList.add('is-done');
+          if (launchScene) launchScene.classList.add('is-done');
+          if (launchStatus) launchStatus.textContent = 'orbit';
+          if (launchTitle) launchTitle.textContent = 'launch.sh — orbit';
+        }
+      }, step.at * speed);
+    });
+  };
+
+  if (launchClose) launchClose.addEventListener('click', closeLaunchpad);
+  if (launchpad) {
+    launchpad.addEventListener('click', (event) => {
+      if (event.target === launchpad) closeLaunchpad();
+    });
+  }
+
+  if (launchGo) {
+    launchGo.addEventListener('click', () => {
+      if (launchGo.dataset.mode === 'signal') {
+        closeLaunchpad();
+        scrollToId('signal');
+      } else {
+        runLaunch();
+      }
+    });
+  }
+
+  launchButtons.forEach((btn) => {
+    btn.addEventListener('click', (event) => {
+      event.preventDefault();
+      runLaunch();
+    });
+  });
+
+  if (unlocked) applyUnlock(false);
+
 
   /* =========================================================
      snake.sh
@@ -1549,6 +1788,10 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
+      if (launchpad && launchpad.classList.contains('open')) {
+        closeLaunchpad();
+        return;
+      }
       if (lightbox && lightbox.classList.contains('open')) {
         closeLightbox();
         return;
